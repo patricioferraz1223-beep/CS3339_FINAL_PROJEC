@@ -98,6 +98,8 @@ QUESTIONS:
 //////////////////////////////////////////////////////////////////////////////////////////*/
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
+// FIXME: Not implemented    
+
     Program Counter:
     - INPUT: 32-bit address
     - OUTPUT: 32-bit instruction address 
@@ -108,6 +110,8 @@ unint32_t program_counter(uint32_t address) {
 }
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
+// FIXME: Not implemented    
+
     Instruction Memory:
     - INPUT: 32-bit instruction address (from PC)
     - OUTPUT: 32-bit instruction
@@ -127,6 +131,8 @@ class InstructionMemory {
 };
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
+// FIXME: Not implemented    
+
     Mux 1:
     - This mux Sets the destination register for writing back results in the WB stage.
     - INPUT: bits 15-11 of instruction
@@ -140,6 +146,31 @@ uint8_t mux1(uint8_t input1, uint8_t input2, bool control_signal) {
 }
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
+// FIXME: Not implemented    
+
+    Sign Extend:
+    - INPUT: bits 15-0 of instruction
+    - OUTPUT: 32-bit sign-extended value
+//////////////////////////////////////////////////////////////////////////////////////////*/
+uint32_t sign_enxtender(uint16_t input) {
+    return 0; 
+}
+
+/*/////////////////////////////////////////////////////////////////////////////////////////
+// FIXME: Not implemented    
+
+    Register File:
+    - INPUT: bits 25-21 of instruction (Read Addr 1)
+    - INPUT: bits 20-16 of instruction (Read Addr 2)
+    - INPUT: Write address (Mux 1 output)
+    - INPUT: Write Data (32 bits, from WB stage)
+    - INPUT: Control Unit output
+    - OUTPUT: Read Data 1 (32 bits)
+    - OUTPUT: Read Data 2 (32 bits)
+//////////////////////////////////////////////////////////////////////////////////////////*/
+
+
+/*/////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////*/
 
 int main() {
@@ -149,7 +180,7 @@ int main() {
 
     uint32_t instruction = instr_mem.read_address(instruction_address); // Fetch instruction from memory
 
-    
+
 
     return 0;
 }
