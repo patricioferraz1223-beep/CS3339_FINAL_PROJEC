@@ -123,9 +123,21 @@ class InstructionMemory {
             return 0xFFFFFFFF; // Example dummy instruction
         }
         void load_instructions(uint32_t address, uint32_t instruction) {
-            // For this project, we will not implement writing to instruction memory.
         }
 };
+
+/*/////////////////////////////////////////////////////////////////////////////////////////
+    Mux 1:
+    - This mux Sets the destination register for writing back results in the WB stage.
+    - INPUT: bits 15-11 of instruction
+    - INPUT: bits 20-16 of instruction
+    - INPUT: Control Unit output
+    - OUTPUT: 8-bit value ()
+//////////////////////////////////////////////////////////////////////////////////////////*/
+uint8_t mux1(uint8_t input1, uint8_t input2, bool control_signal) {
+    // For this project, we will return one of the inputs based on the control signal.
+    return control_signal ? input1 : input2;
+}
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////*/
