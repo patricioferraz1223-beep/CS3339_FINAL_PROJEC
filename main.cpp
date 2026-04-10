@@ -118,7 +118,7 @@ unint32_t program_counter(uint32_t address) {
 //////////////////////////////////////////////////////////////////////////////////////////*/
 class InstructionMemory {
     private:
-    unordered_map<uint32_t, uint32_t> memory; // Address to instruction mapping
+        unordered_map<uint32_t, uint32_t> memory; // Address to instruction mapping
 
     public:
         uint32_t read_address(uint32_t address) {
@@ -162,24 +162,53 @@ uint32_t sign_enxtender(uint16_t input) {
     Register File:
     - INPUT: bits 25-21 of instruction (Read Addr 1)
     - INPUT: bits 20-16 of instruction (Read Addr 2)
-    - INPUT: Write address (Mux 1 output)
+    - INPUT: Write address (Mux 1 output), 5 bits
     - INPUT: Write Data (32 bits, from WB stage)
     - INPUT: Control Unit output
     - OUTPUT: Read Data 1 (32 bits)
     - OUTPUT: Read Data 2 (32 bits)
 //////////////////////////////////////////////////////////////////////////////////////////*/
+class register_file {
+    private:
+        int memory_amount = 32; // Number of registers
+        uint32_t registers[memory_amount]; // Register number to value mapping
 
+    public:
+        void read_instructions(uint32_t instruction, uint32_t write_data, bool control_signal);
+}
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////*/
 
 int main() {
+    uint32_t sr_instruction = 0;
 
-    uint32_t instruction_address = program_counter(0x00000000); // Example usage of program counter
-    InstructionMemory instr_mem;
+    while (true){ 
+        uint32_t instruction_address = program_counter(0x00000000); // Example usage of program counter
+        InstructionMemory instr_mem;
 
-    uint32_t instruction = instr_mem.read_address(instruction_address); // Fetch instruction from memory
+        // Read address and return instruction
+        uint32_t instruction = instr_mem.read_address(instruction_address); // Fetch instruction from memory
 
+        // Load instruction from state register into the Register file
+        sr_instruction -> Register_file;
+    
+        sr_instruction = instruction;
+    }
+
+    
+
+/*/////////////////////////////////////////////////////////////////////////////////////////
+    While instructions remain
+        IF:
+            Produce instruction
+
+        ID: 
+            Decode instructions and create outputs
+
+        At the End:
+            Load the outputs of each stage into the state registers
+//////////////////////////////////////////////////////////////////////////////////////////*/
 
 
     return 0;
