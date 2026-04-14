@@ -47,39 +47,47 @@ Necessary instructions:
     J       jump
     NOP     no op
 
+
+
+
+Architecture design:
+- I need something to assemble individual instructions into their binary format.
+- I need something to load a file into instruction memory.
+- I need something to read each line from the file
+- I need something to loop through the assembly file
+
+What I'm currently working on is how to divide the responsibilities between the instruction memory and the assembler. 
+
+I think the assembler can be its own function, while the instruction memory has separete load individual instructions and a load file function.
+
 */
 #include <iostream>
 #include <fstream>
 
-int main () {
-    std::string instruction;
-    std::ifstream instruction_file("assembly_file.txt");
+uint32_t assemble_instruction () {
 
-    while (getline (instruction_file, instruction)) {
-        std::string instruction_file;
+    std::istringstream instruction_line(line);
 
-        std::istringstream instruction_line(line);
+    std::string op, r1, r2, r3;
+    instruction_line >> op >> r1 >> r2 >> r3;
 
-        std::string op, r1, r2, r3;
-        instruction_line >> op >> r1 >> r2 >> r3;
-
-        if (op == "ADD")
-        else if (op == "ADDI")
-        else if (op == "SUB")
-        else if (op == "MUL")
-        else if (op == "AND")
-        else if (op == "OR")
-        else if (op == "SLL")
-        else if (op == "SRL")
-        else if (op == "LW")
-        else if (op == "SW")
-        else if (op == "BEQ")
-        else if (op == "J")
-        else if (op == "NOP")
-        else {
-            std::cout << "Invalid instruction: " << op << "\n";
-        }
+    if (op == "ADD")
+    else if (op == "ADDI")
+    else if (op == "SUB")
+    else if (op == "MUL")
+    else if (op == "AND")
+    else if (op == "OR")
+    else if (op == "SLL")
+    else if (op == "SRL")
+    else if (op == "LW")
+    else if (op == "SW")
+    else if (op == "BEQ")
+    else if (op == "J")
+    else if (op == "NOP")
+    else {
+        std::cout << "Invalid instruction: " << op << "\n";
     }
+    
 
     return 0;
 }
