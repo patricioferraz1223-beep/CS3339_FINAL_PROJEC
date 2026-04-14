@@ -13,6 +13,18 @@ ifstream MyReadFile("filename.txt");
 
 // Use a while loop together with the getline() function to read the file line by line
 while (getline (MyReadFile, instruction)) {
+    std::string line = "add $t0 $t1 $t2";
+
+    std::istringstream iss(line);
+
+    std::string op, r1, r2, r3;
+    iss >> op >> r1 >> r2 >> r3;
+
+    std::cout << op << "\n";  // add
+    std::cout << r1 << "\n";  // $t0
+    std::cout << r2 << "\n";  // $t1
+    std::cout << r3 << "\n";  // $t2
+
 }
 
 // Close the file
@@ -36,3 +48,11 @@ Necessary instructions:
     NOP     no op
 
 */
+#include <iostream>
+#include <fstream>
+
+int main () {
+    string instruction;
+    ifstream MyReadFile("assembly_file.txt");
+    return 0;
+}
