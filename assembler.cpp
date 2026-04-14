@@ -52,7 +52,34 @@ Necessary instructions:
 #include <fstream>
 
 int main () {
-    string instruction;
-    ifstream MyReadFile("assembly_file.txt");
+    std::string instruction;
+    std::ifstream instruction_file("assembly_file.txt");
+
+    while (getline (instruction_file, instruction)) {
+        std::string instruction_file;
+
+        std::istringstream instruction_line(line);
+
+        std::string op, r1, r2, r3;
+        instruction_line >> op >> r1 >> r2 >> r3;
+
+        if (op == "ADD")
+        else if (op == "ADDI")
+        else if (op == "SUB")
+        else if (op == "MUL")
+        else if (op == "AND")
+        else if (op == "OR")
+        else if (op == "SLL")
+        else if (op == "SRL")
+        else if (op == "LW")
+        else if (op == "SW")
+        else if (op == "BEQ")
+        else if (op == "J")
+        else if (op == "NOP")
+        else {
+            std::cout << "Invalid instruction: " << op << "\n";
+        }
+    }
+
     return 0;
 }
