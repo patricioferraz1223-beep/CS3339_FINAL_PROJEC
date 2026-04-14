@@ -126,7 +126,17 @@ class InstructionMemory {
             // In a real implementation, this would access memory to fetch the instruction.
             return 0xFFFFFFFF; // Example dummy instruction
         }
-        void load_instructions(uint32_t address, uint32_t instruction) {
+        void load_instruction(uint32_t address, uint32_t instruction) {
+        }
+        void load_file(std::string filename) {
+            std::string instruction;
+            std::ifstream instruction_file("assembly_file.txt");
+            while (std::getline(instruction_file, instruction)) {
+                // Here you would parse the instruction and load it into memory.
+                // For this example, we will just print the instruction.
+                std::cout << instruction << std::endl;
+            }
+            instruction_file.close();
         }
 };
 
