@@ -203,19 +203,43 @@ int main() {
     mux1                M1;
     sign_enxtender      SE;
 
-    while (true){ 
+    while (true){   // FIXME: set condition (while instructions remain)
+
+        // FIXME: I haven't included the mux that selects between the branch address and 
+        //  the next sequential address for the PC input
+
+        // Stage 1: Fetch Stage
 
         // Take PC output and feed it into IMem to get instruction
         uint32_t instruction_address = program_counter(0x00000000); // Example usage of program counter
         InstructionMemory instr_mem;
 
+        // Read address from IMemand 
         uint32_t instruction = instr_mem.read_address(instruction_address); // Fetch instruction from memory
 
-        // Read address from IMemand 
+        // Stage 2: Decode Stage
+        
+        // Load instruction into the Register file and output the read addresses
+        // sr_instruction -> Register_file;
 
-        // Load instruction from state register into the Register file
-        sr_instruction -> Register_file;
-    
+        // Sign extend
+        // QUESTION: Is this for the immediate?
+
+        // Stage 3: Execute
+
+        // Send SE output to SL2
+        // Send SE output and Read Data 2 to Mux2
+        // Send SL2 output and PC+4 to Adder for branch address calculation
+        // Send Mux2 output and Read Data 1 to ALU for execution
+
+        // Stage 4: Memory Access
+
+        // Send ALU output and write data address to DMem
+
+        // Stage 5: Write Back
+
+        // Send DMem output and ALU output to Mux4 for selecting write back data
+
         // Load values into state registers for the next stage
     }
 
