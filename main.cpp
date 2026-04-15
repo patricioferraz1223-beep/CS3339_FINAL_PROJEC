@@ -132,6 +132,9 @@ class InstructionMemory {
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
 // FIXME: Not implemented    
+// NOTE: This could be a general mux type that uses templating so we can apply it in 
+//  different contexts.
+
 
     Mux 1:
     - This mux Sets the destination register for writing back results in the WB stage.
@@ -193,17 +196,27 @@ int main() {
     uint32_t sr_dmem_out = 0;
     uint32_t dmem_address = 0;
 
+    // Intialize Modules
+    program_counter     PC;
+    InstructionMemory   IMem;
+    register_file       RegFile;
+    mux1                M1;
+    sign_enxtender      SE;
+
     while (true){ 
+
+        // Take PC output and feed it into IMem to get instruction
         uint32_t instruction_address = program_counter(0x00000000); // Example usage of program counter
         InstructionMemory instr_mem;
 
-        // Read address and return instruction
         uint32_t instruction = instr_mem.read_address(instruction_address); // Fetch instruction from memory
+
+        // Read address from IMemand 
 
         // Load instruction from state register into the Register file
         sr_instruction -> Register_file;
     
-        sr_instruction = instruction;
+        // Load values into state registers for the next stage
     }
 
     
