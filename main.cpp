@@ -181,7 +181,17 @@ class register_file {
 //////////////////////////////////////////////////////////////////////////////////////////*/
 
 int main() {
-    uint32_t sr_instruction = 0;
+    // Declare state registers for each stage of the pipeline
+    uint32_t sr_imem_out = 0;
+
+    uint32_t sr_reg_file_out_1 = 0;
+    uint32_t sr_reg_file_out_2 = 0;
+
+    uint32_t sr_alu_out = 0;
+    uint32_t write_data_loc = 0;
+
+    uint32_t sr_dmem_out = 0;
+    uint32_t dmem_address = 0;
 
     while (true){ 
         uint32_t instruction_address = program_counter(0x00000000); // Example usage of program counter
