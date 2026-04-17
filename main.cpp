@@ -185,6 +185,7 @@ class register_file {
 
 int main() {
     // Declare state registers for each stage of the pipeline
+    // FIXME: I need to change these types, theyre not all accurate
     uint32_t sr_imem_out = 0;
 
     uint32_t sr_reg_file_out_1 = 0;
