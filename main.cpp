@@ -177,7 +177,7 @@ class register_file {
         uint32_t registers[memory_amount]; // Register number to value mapping
 
     public:
-        void read_instructions(uint32_t instruction, uint32_t write_data, bool control_signal);
+        uint62_t read_instructions(uint8_t read_data_1, uint8_t read_data_2, uint8_t write_addr, uint32_t write_data, bool control_signal);
 }
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
@@ -217,10 +217,14 @@ int main() {
         // Read address from IMemand 
         uint32_t instruction = instr_mem.read_address(instruction_address); // Fetch instruction from memory
 
-        // Stage 2: Decode Stage
+        // Stage 2: Instruction Decode Stage
         
         // Load instruction into the Register file and output the read addresses
         // sr_instruction -> Register_file;
+
+        // void read_instructions(uint8_t read_data_1, uint8_t read_data_2, uint8_t write_addr, uint32_t write_data, bool control_signal);
+        uint8_t read_data_1 = (sr_imem_out >> 21) & 0x1F;   // bits 21-25
+        RegFile.read_instructions(read_data_1);
 
         // Sign extend
         // QUESTION: Is this for the immediate?
