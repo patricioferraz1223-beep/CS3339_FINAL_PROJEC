@@ -177,7 +177,7 @@ class register_file {
         uint32_t registers[memory_amount]; // Register number to value mapping
 
     public:
-        uint62_t read_instructions(uint8_t read_data_1, uint8_t read_data_2, uint8_t write_addr, uint32_t write_data, bool control_signal);
+        uint64_t read_instructions(uint8_t read_data_1, uint8_t read_data_2, uint8_t write_addr, uint32_t write_data, bool control_signal);
 }
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
@@ -224,7 +224,7 @@ int main() {
 
         // void read_instructions(uint8_t read_data_1, uint8_t read_data_2, uint8_t write_addr, uint32_t write_data, bool control_signal);
         uint8_t read_data_1 = (sr_imem_out >> 21) & 0x1F;   // bits 21-25
-        RegFile.read_instructions(read_data_1);
+        RegFile.read_instructions(read_data_1); // FIXME: Need to fill in the other parameters
 
         // Sign extend
         // QUESTION: Is this for the immediate?
