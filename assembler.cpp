@@ -2,9 +2,6 @@
 This file contains the assembler. Currently, I'm whiteboarding my design.
 
 
-
-
-
 // Create a text string, which is used to output the text file
 string instruction;
 
@@ -71,19 +68,45 @@ uint32_t assemble_instruction () {
     std::string op, r1, r2, r3;
     instruction_line >> op >> r1 >> r2 >> r3;
 
-    if (op == "ADD")
-    else if (op == "ADDI")
-    else if (op == "SUB")
-    else if (op == "MUL")
-    else if (op == "AND")
-    else if (op == "OR")
-    else if (op == "SLL")
-    else if (op == "SRL")
-    else if (op == "LW")
-    else if (op == "SW")
-    else if (op == "BEQ")
-    else if (op == "J")
-    else if (op == "NOP")
+    if (op == "ADD") { // ADD rd, rs, rt {}
+        // rd = rs + rt
+    }
+    else if (op == "ADDI") { // ADDI rt, rs, imm
+        // rt = rs + imm
+    }
+    else if (op == "SUB") { // SUB rd, rs, rt
+        // rd = rs - rt
+    }
+    else if (op == "MUL") { // MUL rd, rs, rt
+        // rd = rs * rt
+    }
+    else if (op == "AND") { // AND rd, rs, rt
+        // rd = rs & rt
+    }
+    else if (op == "OR") { // OR rd, rs, rt
+        // rd = rs | rt
+    }
+    else if (op == "SLL") { // SLL rd, rt, shamt
+        // rd = rt << shamt
+    }
+    else if (op == "SRL") { // SRL rd, rt, shamt
+        // rd = rt >> shamt
+    }
+    else if (op == "LW") { // LW rt, offset(base)
+        // rt = Memory[base + offset]
+    }
+    else if (op == "SW") { // SW rt, offset(base)
+        // Memory[base + offset] = rt
+    }
+    else if (op == "BEQ") { // BEQ rs, rt, offset/label/immediate
+        // if (rs == rt) then PC = PC + offset
+    }
+    else if (op == "J") { // J target
+        // PC = target
+    }
+    else if (op == "NOP") { // NOP
+        // do nothing
+    }
     else {
         std::cout << "Invalid instruction: " << op << "\n";
     }
