@@ -61,51 +61,106 @@ I think the assembler can be its own function, while the instruction memory has 
 #include <iostream>
 #include <fstream>
 
+int reg_to_int(std::string reg) {
+    // assumes format "R<number>"
+    return std::stoi(reg.substr(1));
+}
+
 uint32_t assemble_instruction () {
 
     std::istringstream instruction_line(line);
 
     std::string op, r1, r2, r3;
     instruction_line >> op >> r1 >> r2 >> r3;
+    std::string instruction_binary = "";
 
     if (op == "ADD") { // ADD rd, rs, rt {}
         // rd = rs + rt
+        instruction_binary += ""; // opcode
+        instruction_binary += ""; // rs
+        instruction_binary += ""; // rt
+        instruction_binary += ""; // rd
     }
     else if (op == "ADDI") { // ADDI rt, rs, imm
         // rt = rs + imm
+        instruction_binary += ""; // opcode
+        instruction_binary += ""; // rs
+        instruction_binary += ""; // rt
+        instruction_binary += ""; // immediate
+
     }
     else if (op == "SUB") { // SUB rd, rs, rt
         // rd = rs - rt
+        instruction_binary += ""; // opcode
+        instruction_binary += ""; // rs
+        instruction_binary += ""; // rt
+        instruction_binary += ""; // rd
     }
     else if (op == "MUL") { // MUL rd, rs, rt
         // rd = rs * rt
+        instruction_binary += ""; // opcode
+        instruction_binary += ""; // rs
+        instruction_binary += ""; // rt
+        instruction_binary += ""; // rd
     }
     else if (op == "AND") { // AND rd, rs, rt
         // rd = rs & rt
+        instruction_binary += ""; // opcode
+        instruction_binary += ""; // rs
+        instruction_binary += ""; // rt
+        instruction_binary += ""; // rd
     }
     else if (op == "OR") { // OR rd, rs, rt
         // rd = rs | rt
+        instruction_binary += ""; // opcode
+        instruction_binary += ""; // rs
+        instruction_binary += ""; // rt
+        instruction_binary += ""; // rd
     }
     else if (op == "SLL") { // SLL rd, rt, shamt
         // rd = rt << shamt
+        instruction_binary += ""; // opcode
+        instruction_binary += ""; // rs
+        instruction_binary += ""; // rt
+        instruction_binary += ""; // rd
     }
+
     else if (op == "SRL") { // SRL rd, rt, shamt
         // rd = rt >> shamt
+        instruction_binary += ""; // opcode
+        instruction_binary += ""; // rs
+        instruction_binary += ""; // rt
+        instruction_binary += ""; // rd
     }
     else if (op == "LW") { // LW rt, offset(base)
         // rt = Memory[base + offset]
+        instruction_binary += ""; // opcode
+        instruction_binary += ""; // rs
+        instruction_binary += ""; // rt
+        instruction_binary += ""; // immediate
     }
     else if (op == "SW") { // SW rt, offset(base)
         // Memory[base + offset] = rt
+        instruction_binary += ""; // opcode
+        instruction_binary += ""; // rs
+        instruction_binary += ""; // rt
+        instruction_binary += ""; // immediate
     }
     else if (op == "BEQ") { // BEQ rs, rt, offset/label/immediate
         // if (rs == rt) then PC = PC + offset
+        instruction_binary += ""; // opcode
+        instruction_binary += ""; // rs
+        instruction_binary += ""; // rt
+        instruction_binary += ""; // immediate
     }
     else if (op == "J") { // J target
         // PC = target
+        instruction_binary += ""; // opcode
+        instruction_binary += ""; // target
     }
     else if (op == "NOP") { // NOP
         // do nothing
+        instruction_binary += ""; // opcode
     }
     else {
         std::cout << "Invalid instruction: " << op << "\n";
