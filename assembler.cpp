@@ -74,11 +74,22 @@ uint32_t assemble_instruction () {
     std::string op, r1, r2, r3;
     instruction_line >> op >> r1 >> r2 >> r3;
     uint32_t instruction_binary = 0;
+    uint32_t opcode, funct, shamt;
+    uint32_t rs, rt, rd;
 
     if (op == "ADD") { // ADD rd, rs, rt
         // rd = rs + rt
-        instruction_binary |= 0x00;   // opcode
         funct = 0x20;                 // function
+        opcode = 0x00;
+        shamt  = 0;
+
+
+        instruction_binary |= (opcode << 26);
+        instruction_binary |= (rs     << 21);
+        instruction_binary |= (rt     << 16);
+        instruction_binary |= (rd     << 11);
+        instruction_binary |= (shamt  << 6);
+        instruction_binary |= (funct);
     }
     else if (op == "ADDI") { // ADDI rt, rs, imm
         // rt = rs + imm
@@ -86,35 +97,85 @@ uint32_t assemble_instruction () {
     }
     else if (op == "SUB") { // SUB rd, rs, rt
         // rd = rs - rt
-        instruction_binary |= 0x00;   // opcode
         funct = 0x22;                 // function
+        opcode = 0x00;
+        shamt  = 0;
+
+        instruction_binary |= (opcode << 26);
+        instruction_binary |= (rs     << 21);
+        instruction_binary |= (rt     << 16);
+        instruction_binary |= (rd     << 11);
+        instruction_binary |= (shamt  << 6);
+        instruction_binary |= (funct);
     }
     else if (op == "MUL") { // MUL rd, rs, rt
         // rd = rs * rt
         // WARNING: depends on which MIPS variant your class is using
         // If your class treats MUL like a normal 3-register ALU op, this may differ.
-        instruction_binary |= 0x1C;   // opcode for SPECIAL2
         funct = 0x02;                 // function for MUL
+        opcode = 0x1C;
+        shamt  = 0;
+
+        instruction_binary |= (opcode << 26);
+        instruction_binary |= (rs     << 21);
+        instruction_binary |= (rt     << 16);
+        instruction_binary |= (rd     << 11);
+        instruction_binary |= (shamt  << 6);
+        instruction_binary |= (funct);
     }
     else if (op == "AND") { // AND rd, rs, rt
         // rd = rs & rt
-        instruction_binary |= 0x00;   // opcode
         funct = 0x24;                 // function
+        opcode = 0x00;
+        shamt  = 0;
+
+        instruction_binary |= (opcode << 26);
+        instruction_binary |= (rs     << 21);
+        instruction_binary |= (rt     << 16);
+        instruction_binary |= (rd     << 11);
+        instruction_binary |= (shamt  << 6);
+        instruction_binary |= (funct);
     }
     else if (op == "OR") { // OR rd, rs, rt
         // rd = rs | rt
-        instruction_binary |= 0x00;   // opcode
         funct = 0x25;                 // function
+        opcode = 0x00;
+        shamt  = 0;
+
+        instruction_binary |= (opcode << 26);
+        instruction_binary |= (rs     << 21);
+        instruction_binary |= (rt     << 16);
+        instruction_binary |= (rd     << 11);
+        instruction_binary |= (shamt  << 6);
+        instruction_binary |= (funct);
     }
+    // FIXME: I need to set shift amount
     else if (op == "SLL") { // SLL rd, rt, shamt
         // rd = rt << shamt
-        instruction_binary |= 0x00;   // opcode
         funct = 0x00;                 // function
+        opcode = 0x00;
+        rs = 0;
+
+        instruction_binary |= (opcode << 26);
+        instruction_binary |= (rs     << 21);
+        instruction_binary |= (rt     << 16);
+        instruction_binary |= (rd     << 11);
+        instruction_binary |= (shamt  << 6);
+        instruction_binary |= (funct);
     }
+    // FIXME: I need to set shift amount
     else if (op == "SRL") { // SRL rd, rt, shamt
         // rd = rt >> shamt
-        instruction_binary |= 0x00;   // opcode
         funct = 0x02;                 // function
+        opcode = 0x00;
+        rs = 0;
+
+        instruction_binary |= (opcode << 26);
+        instruction_binary |= (rs     << 21);
+        instruction_binary |= (rt     << 16);
+        instruction_binary |= (rd     << 11);
+        instruction_binary |= (shamt  << 6);
+        instruction_binary |= (funct);
     }
     else if (op == "LW") { // LW rt, offset(base)
         // rt = Memory[base + offset]
@@ -134,11 +195,10 @@ uint32_t assemble_instruction () {
     }
     else if (op == "NOP") { // NOP
         // NOP = SLL $0, $0, 0
-        instruction_binary |= 0x00;   // opcode
-        funct = 0x00;                 // function
+        instruction_binary = 0;    
     }    
     else {
-        std::cout << "Invalid instruction: " << op << "\n";
+        instruction_binary = 0;    
     }
     
 
