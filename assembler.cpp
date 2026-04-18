@@ -66,102 +66,77 @@ int reg_to_int(std::string reg) {
     return std::stoi(reg.substr(1));
 }
 
+// FIXME: I still need to deal with special registers
 uint32_t assemble_instruction () {
 
     std::istringstream instruction_line(line);
 
     std::string op, r1, r2, r3;
     instruction_line >> op >> r1 >> r2 >> r3;
-    std::string instruction_binary = "";
+    uint32_t instruction_binary = 0;
 
-    if (op == "ADD") { // ADD rd, rs, rt {}
+    if (op == "ADD") { // ADD rd, rs, rt
         // rd = rs + rt
-        instruction_binary += ""; // opcode
-        instruction_binary += ""; // rs
-        instruction_binary += ""; // rt
-        instruction_binary += ""; // rd
+        instruction_binary |= 0x00;   // opcode
+        funct = 0x20;                 // function
     }
     else if (op == "ADDI") { // ADDI rt, rs, imm
         // rt = rs + imm
-        instruction_binary += ""; // opcode
-        instruction_binary += ""; // rs
-        instruction_binary += ""; // rt
-        instruction_binary += ""; // immediate
-
+        instruction_binary |= 0x08;   // opcode
     }
     else if (op == "SUB") { // SUB rd, rs, rt
         // rd = rs - rt
-        instruction_binary += ""; // opcode
-        instruction_binary += ""; // rs
-        instruction_binary += ""; // rt
-        instruction_binary += ""; // rd
+        instruction_binary |= 0x00;   // opcode
+        funct = 0x22;                 // function
     }
     else if (op == "MUL") { // MUL rd, rs, rt
         // rd = rs * rt
-        instruction_binary += ""; // opcode
-        instruction_binary += ""; // rs
-        instruction_binary += ""; // rt
-        instruction_binary += ""; // rd
+        // WARNING: depends on which MIPS variant your class is using
+        // If your class treats MUL like a normal 3-register ALU op, this may differ.
+        instruction_binary |= 0x1C;   // opcode for SPECIAL2
+        funct = 0x02;                 // function for MUL
     }
     else if (op == "AND") { // AND rd, rs, rt
         // rd = rs & rt
-        instruction_binary += ""; // opcode
-        instruction_binary += ""; // rs
-        instruction_binary += ""; // rt
-        instruction_binary += ""; // rd
+        instruction_binary |= 0x00;   // opcode
+        funct = 0x24;                 // function
     }
     else if (op == "OR") { // OR rd, rs, rt
         // rd = rs | rt
-        instruction_binary += ""; // opcode
-        instruction_binary += ""; // rs
-        instruction_binary += ""; // rt
-        instruction_binary += ""; // rd
+        instruction_binary |= 0x00;   // opcode
+        funct = 0x25;                 // function
     }
     else if (op == "SLL") { // SLL rd, rt, shamt
         // rd = rt << shamt
-        instruction_binary += ""; // opcode
-        instruction_binary += ""; // rs
-        instruction_binary += ""; // rt
-        instruction_binary += ""; // rd
+        instruction_binary |= 0x00;   // opcode
+        funct = 0x00;                 // function
     }
-
     else if (op == "SRL") { // SRL rd, rt, shamt
         // rd = rt >> shamt
-        instruction_binary += ""; // opcode
-        instruction_binary += ""; // rs
-        instruction_binary += ""; // rt
-        instruction_binary += ""; // rd
+        instruction_binary |= 0x00;   // opcode
+        funct = 0x02;                 // function
     }
     else if (op == "LW") { // LW rt, offset(base)
         // rt = Memory[base + offset]
-        instruction_binary += ""; // opcode
-        instruction_binary += ""; // rs
-        instruction_binary += ""; // rt
-        instruction_binary += ""; // immediate
+        instruction_binary |= 0x23;   // opcode
     }
     else if (op == "SW") { // SW rt, offset(base)
         // Memory[base + offset] = rt
-        instruction_binary += ""; // opcode
-        instruction_binary += ""; // rs
-        instruction_binary += ""; // rt
-        instruction_binary += ""; // immediate
+        instruction_binary |= 0x2B;   // opcode
     }
     else if (op == "BEQ") { // BEQ rs, rt, offset/label/immediate
         // if (rs == rt) then PC = PC + offset
-        instruction_binary += ""; // opcode
-        instruction_binary += ""; // rs
-        instruction_binary += ""; // rt
-        instruction_binary += ""; // immediate
+        instruction_binary |= 0x04;   // opcode
     }
     else if (op == "J") { // J target
         // PC = target
-        instruction_binary += ""; // opcode
-        instruction_binary += ""; // target
+        instruction_binary |= 0x02;   // opcode
     }
     else if (op == "NOP") { // NOP
-        // do nothing
-        instruction_binary += ""; // opcode
-    }
+        // NOP = SLL $0, $0, 0
+        instruction_binary |= 0x00;   // opcode
+        funct = 0x00;                 // function
+    }    
     else {
         std::cout << "Invalid instruction: " << op << "\n";
     }
