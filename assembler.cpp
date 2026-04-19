@@ -60,10 +60,40 @@ I think the assembler can be its own function, while the instruction memory has 
 */
 #include <iostream>
 #include <fstream>
+#include <unordered_map>
 
 int reg_to_int(std::string reg) {
     // assumes format "R<number>"
     return std::stoi(reg.substr(1));
+}
+
+void process_assembly_file(std::string filename) {
+    std::string line;
+    std::ifstream instruction_file(filename);
+
+    int instruction_count = 0
+    std::unordered_map<std::string, uint32_t> label_addresses; // For tracking label addresses for branch and jump instructions
+
+    while (!filename.eof()) {
+        std::getline(instruction_file, line);
+
+        // Track Instruction index for Branch and Jump Instructions
+        instruction_count++;
+        std::string label;
+        instruction_line >> label;
+
+        // FIXME: I'm not sure all the possible labels I need
+        // FIXME: I also need to either deal with a label or process an instruction
+        if (label == "LOOP" || label == "END") { 
+            label_addresses[label] = instruction_count; // Store the instruction index for the label
+        }
+        else {
+            uint32_t instruction_binary = assemble_instruction(line);
+            // Write instruction to binary output file
+        }
+        
+    }
+
 }
 
 // FIXME: I still need to deal with special registers
