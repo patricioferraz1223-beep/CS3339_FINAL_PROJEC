@@ -82,14 +82,14 @@ void process_assembly_file(std::string filename) {
         std::string label;
         instruction_line >> label;
 
-        // FIXME: I'm not sure all the possible labels I need
-        // FIXME: I also need to either deal with a label or process an instruction
-        if (label == "LOOP" || label == "END") { 
+        // TODO: I'm not sure all the possible labels I need
+        // TODO: I also need to either deal with a label or process an instruction
+        if (label == "LOOP" || label == "END" || label == "START") { // Example labels
             label_addresses[label] = instruction_count; // Store the instruction index for the label
         }
         else {
             uint32_t instruction_binary = assemble_instruction(line);
-            // Write instruction to binary output file
+            // TODO: Write instruction to binary output file
         }
         
     }
@@ -218,10 +218,14 @@ uint32_t assemble_instruction () {
     else if (op == "BEQ") { // BEQ rs, rt, offset/label/immediate
         // if (rs == rt) then PC = PC + offset
         instruction_binary |= 0x04;   // opcode
+        std::string label = r3; // Assuming the label is the third operand
+        uint32_t label_address = label_addresses[label]; // Get the instruction index for the label
     }
     else if (op == "J") { // J target
         // PC = target
         instruction_binary |= 0x02;   // opcode
+        std::string label = r1;
+        uint32_t label_address = label_addresses[label]; // Get the instruction index for the label
     }
     else if (op == "NOP") { // NOP
         // NOP = SLL $0, $0, 0
