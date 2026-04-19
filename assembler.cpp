@@ -62,179 +62,233 @@ I think the assembler can be its own function, while the instruction memory has 
 #include <fstream>
 #include <unordered_map>
 
-int reg_to_int(std::string reg) {
-    // assumes format "R<number>"
-    return std::stoi(reg.substr(1));
-}
-
-void process_assembly_file(std::string filename) {
-    std::string line;
-    std::ifstream instruction_file(filename);
-
-    int instruction_count = 0
-    std::unordered_map<std::string, uint32_t> label_addresses; // For tracking label addresses for branch and jump instructions
-
-    while (!filename.eof()) {
-        std::getline(instruction_file, line);
-
-        // Track Instruction index for Branch and Jump Instructions
-        instruction_count++;
-        std::string label;
-        instruction_line >> label;
-
-        // TODO: I'm not sure all the possible labels I need
-        // TODO: I also need to either deal with a label or process an instruction
-        if (label == "LOOP" || label == "END" || label == "START") { // Example labels
-            label_addresses[label] = instruction_count; // Store the instruction index for the label
-        }
-        else {
-            uint32_t instruction_binary = assemble_instruction(line);
-            // TODO: Write instruction to binary output file
-        }
-        
-    }
-
-}
-
-// FIXME: I still need to deal with special registers
-uint32_t assemble_instruction () {
-
-    std::istringstream instruction_line(line);
-
-    std::string op, r1, r2, r3;
-    instruction_line >> op >> r1 >> r2 >> r3;
-    uint32_t instruction_binary = 0;
-    uint32_t opcode, funct, shamt;
-    uint32_t rs, rt, rd;
-
-    if (op == "ADD") { // ADD rd, rs, rt
-        // rd = rs + rt
-        funct = 0x20;                 // function
-        opcode = 0x00;
-        shamt  = 0;
-
-
-        instruction_binary |= (opcode << 26);
-        instruction_binary |= (rs     << 21);
-        instruction_binary |= (rt     << 16);
-        instruction_binary |= (rd     << 11);
-        instruction_binary |= (shamt  << 6);
-        instruction_binary |= (funct);
-    }
-    else if (op == "ADDI") { // ADDI rt, rs, imm
-        // rt = rs + imm
-        instruction_binary |= 0x08;   // opcode
-    }
-    else if (op == "SUB") { // SUB rd, rs, rt
-        // rd = rs - rt
-        funct = 0x22;                 // function
-        opcode = 0x00;
-        shamt  = 0;
-
-        instruction_binary |= (opcode << 26);
-        instruction_binary |= (rs     << 21);
-        instruction_binary |= (rt     << 16);
-        instruction_binary |= (rd     << 11);
-        instruction_binary |= (shamt  << 6);
-        instruction_binary |= (funct);
-    }
-    else if (op == "MUL") { // MUL rd, rs, rt
-        // rd = rs * rt
-        // WARNING: depends on which MIPS variant your class is using
-        // If your class treats MUL like a normal 3-register ALU op, this may differ.
-        funct = 0x02;                 // function for MUL
-        opcode = 0x1C;
-        shamt  = 0;
-
-        instruction_binary |= (opcode << 26);
-        instruction_binary |= (rs     << 21);
-        instruction_binary |= (rt     << 16);
-        instruction_binary |= (rd     << 11);
-        instruction_binary |= (shamt  << 6);
-        instruction_binary |= (funct);
-    }
-    else if (op == "AND") { // AND rd, rs, rt
-        // rd = rs & rt
-        funct = 0x24;                 // function
-        opcode = 0x00;
-        shamt  = 0;
-
-        instruction_binary |= (opcode << 26);
-        instruction_binary |= (rs     << 21);
-        instruction_binary |= (rt     << 16);
-        instruction_binary |= (rd     << 11);
-        instruction_binary |= (shamt  << 6);
-        instruction_binary |= (funct);
-    }
-    else if (op == "OR") { // OR rd, rs, rt
-        // rd = rs | rt
-        funct = 0x25;                 // function
-        opcode = 0x00;
-        shamt  = 0;
-
-        instruction_binary |= (opcode << 26);
-        instruction_binary |= (rs     << 21);
-        instruction_binary |= (rt     << 16);
-        instruction_binary |= (rd     << 11);
-        instruction_binary |= (shamt  << 6);
-        instruction_binary |= (funct);
-    }
-    // FIXME: I need to set shift amount
-    else if (op == "SLL") { // SLL rd, rt, shamt
-        // rd = rt << shamt
-        funct = 0x00;                 // function
-        opcode = 0x00;
-        rs = 0;
-
-        instruction_binary |= (opcode << 26);
-        instruction_binary |= (rs     << 21);
-        instruction_binary |= (rt     << 16);
-        instruction_binary |= (rd     << 11);
-        instruction_binary |= (shamt  << 6);
-        instruction_binary |= (funct);
-    }
-    // FIXME: I need to set shift amount
-    else if (op == "SRL") { // SRL rd, rt, shamt
-        // rd = rt >> shamt
-        funct = 0x02;                 // function
-        opcode = 0x00;
-        rs = 0;
-
-        instruction_binary |= (opcode << 26);
-        instruction_binary |= (rs     << 21);
-        instruction_binary |= (rt     << 16);
-        instruction_binary |= (rd     << 11);
-        instruction_binary |= (shamt  << 6);
-        instruction_binary |= (funct);
-    }
-    else if (op == "LW") { // LW rt, offset(base)
-        // rt = Memory[base + offset]
-        instruction_binary |= 0x23;   // opcode
-    }
-    else if (op == "SW") { // SW rt, offset(base)
-        // Memory[base + offset] = rt
-        instruction_binary |= 0x2B;   // opcode
-    }
-    else if (op == "BEQ") { // BEQ rs, rt, offset/label/immediate
-        // if (rs == rt) then PC = PC + offset
-        instruction_binary |= 0x04;   // opcode
-        std::string label = r3; // Assuming the label is the third operand
-        uint32_t label_address = label_addresses[label]; // Get the instruction index for the label
-    }
-    else if (op == "J") { // J target
-        // PC = target
-        instruction_binary |= 0x02;   // opcode
-        std::string label = r1;
-        uint32_t label_address = label_addresses[label]; // Get the instruction index for the label
-    }
-    else if (op == "NOP") { // NOP
-        // NOP = SLL $0, $0, 0
-        instruction_binary = 0;    
-    }    
-    else {
-        instruction_binary = 0;    
-    }
+class assembler {
     
+    public:
 
-    return 0;
-}
+        void process_assembly_file(std::string filename) {
+            std::string line;
+            std::ifstream instruction_file(filename);
+
+            // FIXME: This doesn't actually read through the file yet.
+            while (!filename.eof()) {
+                std::getline(instruction_file, line);
+
+                // Track Instruction index for Branch and Jump Instructions
+                
+                std::string label;
+                instruction_line >> label;
+
+                // TODO: Really, the last char should be ':' and this determines if it's a label or not
+                // TODO: I also need to either deal with a label or process an instruction
+                if (label == "LOOP" || label == "END" || label == "START") { // Example labels
+                    label_addresses[label] = instruction_count * 4; // Store the instruction index for the label
+                }
+                else {
+                    instruction_count++;
+                    uint32_t instruction_binary = assemble_instruction(line);
+                    // TODO: Write instruction to binary output file
+                }
+            }
+        }
+
+    private:
+        // For tracking label addresses for branch and jump instructions
+        std::unordered_map<std::string, uint32_t> label_addresses; 
+        int instruction_count = 0
+
+        int reg_to_int(std::string reg) {
+            // assumes format "R<number>"
+            return std::stoi(reg.substr(1));
+        }
+
+        // FIXME: I still need to deal with special registers
+        uint32_t assemble_instruction () {
+
+            std::istringstream instruction_line(line);
+
+            std::string op, r1, r2, r3;
+            instruction_line >> op >> r1 >> r2 >> r3;
+            uint32_t instruction_binary = 0;
+            uint32_t opcode, funct, shamt;
+            uint32_t rs, rt, rd;
+            opcode = funct = shamt = rs = rt = rd = 0;
+
+            if (op == "ADD") { // ADD rd, rs, rt
+                // rd = rs + rt
+                funct = 0x20;                 // function
+                opcode = 0x00;
+                shamt  = 0;
+
+                rs = reg_to_int(r2);
+                rt = reg_to_int(r3);
+                rd = reg_to_int(r1);
+
+                instruction_binary |= (opcode << 26);
+                instruction_binary |= (rs     << 21);
+                instruction_binary |= (rt     << 16);
+                instruction_binary |= (rd     << 11);
+                instruction_binary |= (shamt  << 6);
+                instruction_binary |= (funct);
+            }
+            else if (op == "ADDI") { // ADDI rt, rs, imm
+                // rt = rs + imm
+                instruction_binary |= 0x08;   // opcode
+            }
+            else if (op == "SUB") { // SUB rd, rs, rt
+                // rd = rs - rt
+                funct = 0x22;                 // function
+                opcode = 0x00;
+                shamt  = 0;
+
+                rs = reg_to_int(r2);
+                rt = reg_to_int(r3);
+                rd = reg_to_int(r1);
+
+                instruction_binary |= (opcode << 26);
+                instruction_binary |= (rs     << 21);
+                instruction_binary |= (rt     << 16);
+                instruction_binary |= (rd     << 11);
+                instruction_binary |= (shamt  << 6);
+                instruction_binary |= (funct);
+            }
+            else if (op == "MUL") { // MUL rd, rs, rt
+                // rd = rs * rt
+                // WARNING: depends on which MIPS variant your class is using
+                // If your class treats MUL like a normal 3-register ALU op, this may differ.
+                funct = 0x02;                 // function for MUL
+                opcode = 0x1C;
+                shamt  = 0;
+
+                rs = reg_to_int(r2);
+                rt = reg_to_int(r3);
+                rd = reg_to_int(r1);
+
+                instruction_binary |= (opcode << 26);
+                instruction_binary |= (rs     << 21);
+                instruction_binary |= (rt     << 16);
+                instruction_binary |= (rd     << 11);
+                instruction_binary |= (shamt  << 6);
+                instruction_binary |= (funct);
+            }
+            else if (op == "AND") { // AND rd, rs, rt
+                // rd = rs & rt
+                funct = 0x24;                 // function
+                opcode = 0x00;
+                shamt  = 0;
+
+                rs = reg_to_int(r2);
+                rt = reg_to_int(r3);
+                rd = reg_to_int(r1);
+
+                instruction_binary |= (opcode << 26);
+                instruction_binary |= (rs     << 21);
+                instruction_binary |= (rt     << 16);
+                instruction_binary |= (rd     << 11);
+                instruction_binary |= (shamt  << 6);
+                instruction_binary |= (funct);
+            }
+            else if (op == "OR") { // OR rd, rs, rt
+                // rd = rs | rt
+                funct = 0x25;                 // function
+                opcode = 0x00;
+                shamt  = 0;
+
+                rs = reg_to_int(r2);
+                rt = reg_to_int(r3);
+                rd = reg_to_int(r1);
+
+                instruction_binary |= (opcode << 26);
+                instruction_binary |= (rs     << 21);
+                instruction_binary |= (rt     << 16);
+                instruction_binary |= (rd     << 11);
+                instruction_binary |= (shamt  << 6);
+                instruction_binary |= (funct);
+            }
+            // FIXME: I need to set shift amount
+            else if (op == "SLL") { // SLL rd, rt, shamt
+                // rd = rt << shamt
+                funct = 0x00;                 // function
+                opcode = 0x00;
+                rs = 0;
+
+                rs = reg_to_int(r2);
+                rt = reg_to_int(r3);
+                rd = reg_to_int(r1);
+
+                instruction_binary |= (opcode << 26);
+                instruction_binary |= (rs     << 21);
+                instruction_binary |= (rt     << 16);
+                instruction_binary |= (rd     << 11);
+                instruction_binary |= (shamt  << 6);
+                instruction_binary |= (funct);
+            }
+            // FIXME: I need to set shift amount
+            else if (op == "SRL") { // SRL rd, rt, shamt
+                // rd = rt >> shamt
+                funct = 0x02;                 // function
+                opcode = 0x00;
+                rs = 0;
+
+                rs = reg_to_int(r2);
+                rt = reg_to_int(r3);
+                rd = reg_to_int(r1);
+
+                instruction_binary |= (opcode << 26);
+                instruction_binary |= (rs     << 21);
+                instruction_binary |= (rt     << 16);
+                instruction_binary |= (rd     << 11);
+                instruction_binary |= (shamt  << 6);
+                instruction_binary |= (funct);
+            }
+            else if (op == "LW") { // LW rt, offset(base)
+                // rt = Memory[base + offset]
+                instruction_binary |= 0x23;   // opcode
+            }
+            else if (op == "SW") { // SW rt, offset(base)
+                // Memory[base + offset] = rt
+                instruction_binary |= 0x2B;   // opcode
+            }
+            else if (op == "BEQ") { // BEQ rs, rt, offset/label/immediate
+                // if (rs == rt) then PC = PC + offset
+                opcode = 0x04;   // opcode
+                std::string label = r3; // Assuming the label is the third operand
+                uint32_t label_address - 0;
+                if (label_addresses.contains(label)) 
+                    label_address = label_addresses[label]; // Get the instruction index for the label
+                int32_t offset = (label_address - (current_address + 4)) / 4;
+                offset &= 0xFFFF; // Ensure offset is 16 bits
+
+                rs = reg_to_int(r1);
+                rt = reg_to_int(r2);
+
+                instruction_binary |= (opcode << 26);
+                instruction_binary |= (rs     << 21);
+                instruction_binary |= (rt     << 16);
+                instruction_binary |= (offset);
+
+            }
+            else if (op == "J") { // J target
+                // PC = target
+                opcode = 0x02;   // opcode
+                std::string label = r1;
+                uint32_t label_address = 0;
+                if (label_addresses.contains(label)) 
+                    label_address = label_addresses[label]; // Get the instruction index for the label
+                label_address /= 4; // Convert byte address to instruction index
+                label_address &= 0x3FFFFFF; // Ensure label address is 26 bits
+
+                instruction_binary |= (opcode << 26);
+                instruction_binary |= label_address; // Assuming label_address is the target address
+            }
+            else if (op == "NOP") { // NOP
+                // NOP = SLL $0, $0, 0
+                instruction_binary = 0;    
+            }    
+            else {
+                instruction_binary = 0;    
+            }
+            
+            return instruction_binary;
+        }
+};
