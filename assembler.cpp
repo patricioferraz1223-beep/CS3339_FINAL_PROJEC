@@ -72,12 +72,13 @@ class assembler {
 
             // FIXME: This doesn't actually read through the file yet.
             while (!filename.eof()) {
-                std::getline(instruction_file, line);
+                std::string instruction_line = "";
+                std::getline(instruction_file, instruction_line);
 
                 // Track Instruction index for Branch and Jump Instructions
                 
                 std::string label;
-                instruction_line >> label;
+                instruction_line = label; 
 
                 // TODO: Really, the last char should be ':' and this determines if it's a label or not
                 // TODO: I also need to either deal with a label or process an instruction
@@ -95,7 +96,7 @@ class assembler {
     private:
         // For tracking label addresses for branch and jump instructions
         std::unordered_map<std::string, uint32_t> label_addresses; 
-        int instruction_count = 0
+        int instruction_count = 0;
 
         int reg_to_int(std::string reg) {
             // assumes format "R<number>"
@@ -103,7 +104,7 @@ class assembler {
         }
 
         // FIXME: I still need to deal with special registers
-        uint32_t assemble_instruction () {
+        uint32_t assemble_instruction (std::string line) {
 
             std::istringstream instruction_line(line);
 
@@ -131,6 +132,7 @@ class assembler {
                 instruction_binary |= (shamt  << 6);
                 instruction_binary |= (funct);
             }
+            // TODO: Implement this
             else if (op == "ADDI") { // ADDI rt, rs, imm
                 // rt = rs + imm
                 instruction_binary |= 0x08;   // opcode
@@ -212,8 +214,8 @@ class assembler {
                 opcode = 0x00;
                 rs = 0;
 
-                rs = reg_to_int(r2);
-                rt = reg_to_int(r3);
+                shamt = (r3);
+                rt = reg_to_int(r2);
                 rd = reg_to_int(r1);
 
                 instruction_binary |= (opcode << 26);
@@ -230,8 +232,8 @@ class assembler {
                 opcode = 0x00;
                 rs = 0;
 
-                rs = reg_to_int(r2);
-                rt = reg_to_int(r3);
+                shamt = (r3);
+                rt = reg_to_int(r2);
                 rd = reg_to_int(r1);
 
                 instruction_binary |= (opcode << 26);
@@ -241,10 +243,12 @@ class assembler {
                 instruction_binary |= (shamt  << 6);
                 instruction_binary |= (funct);
             }
+            // TODO: Implement this 
             else if (op == "LW") { // LW rt, offset(base)
                 // rt = Memory[base + offset]
                 instruction_binary |= 0x23;   // opcode
             }
+            // TODO: Implement this
             else if (op == "SW") { // SW rt, offset(base)
                 // Memory[base + offset] = rt
                 instruction_binary |= 0x2B;   // opcode
@@ -253,9 +257,21 @@ class assembler {
                 // if (rs == rt) then PC = PC + offset
                 opcode = 0x04;   // opcode
                 std::string label = r3; // Assuming the label is the third operand
-                uint32_t label_address - 0;
+                uint32_t label_address = 0;
                 if (label_addresses.contains(label)) 
                     label_address = label_addresses[label]; // Get the instruction index for the label
+                else {/* TODO: Handle undefined label error
+                    print an error like:
+                    "Undefined label: LOOPX"
+                    stop assembling that instruction
+                    or stop the whole assembly process
+
+                    do not keep encoding
+                    do not invent an address
+                    do not default to zero
+                    */
+                }
+                int32_t current_address = instruction_count * 4; // Current instruction address in bytes
                 int32_t offset = (label_address - (current_address + 4)) / 4;
                 offset &= 0xFFFF; // Ensure offset is 16 bits
 
@@ -275,7 +291,18 @@ class assembler {
                 uint32_t label_address = 0;
                 if (label_addresses.contains(label)) 
                     label_address = label_addresses[label]; // Get the instruction index for the label
-                label_address /= 4; // Convert byte address to instruction index
+                else {/* TODO: Handle undefined label error
+                    print an error like:
+                    "Undefined label: LOOPX"
+                    stop assembling that instruction
+                    or stop the whole assembly process
+
+                    do not keep encoding
+                    do not invent an address
+                    do not default to zero
+                    */
+                }
+                label_address /= 4; // convert byte address into the 26-bit jump target field value
                 label_address &= 0x3FFFFFF; // Ensure label address is 26 bits
 
                 instruction_binary |= (opcode << 26);
