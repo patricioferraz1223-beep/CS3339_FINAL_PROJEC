@@ -1,33 +1,4 @@
 /*
-This file contains the assembler. Currently, I'm whiteboarding my design.
-
-
-// Create a text string, which is used to output the text file
-string instruction;
-
-// Read from the text file
-ifstream MyReadFile("filename.txt");
-
-// Use a while loop together with the getline() function to read the file line by line
-while (getline (MyReadFile, instruction)) {
-    std::string line = "add $t0 $t1 $t2";
-
-    std::istringstream iss(line);
-
-    std::string op, r1, r2, r3;
-    iss >> op >> r1 >> r2 >> r3;
-
-    std::cout << op << "\n";  // add
-    std::cout << r1 << "\n";  // $t0
-    std::cout << r2 << "\n";  // $t1
-    std::cout << r3 << "\n";  // $t2
-
-}
-
-// Close the file
-MyReadFile.close();
-
-
 Necessary instructions:
     Opcode  Description
     ADD     signed integer addition
@@ -45,17 +16,11 @@ Necessary instructions:
     NOP     no op
 
 
-
-
 Architecture design:
 - I need something to assemble individual instructions into their binary format.
-- I need something to load a file into instruction memory.
-- I need something to read each line from the file
+- I need something to load a file into instruction memory. The instruction memory is responsible for this.
+- I need something to read each line from the filez
 - I need something to loop through the assembly file
-
-What I'm currently working on is how to divide the responsibilities between the instruction memory and the assembler. 
-
-I think the assembler can be its own function, while the instruction memory has separete load individual instructions and a load file function.
 
 */
 #include <iostream>
