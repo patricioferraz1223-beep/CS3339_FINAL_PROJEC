@@ -1,6 +1,7 @@
 #ifndef CONTROLUNIT_H
 #define CONTROLUNIT_H
 
+#include <cstdint>
 #include <iostream>
 using namespace std;
 
@@ -62,10 +63,6 @@ ControlSignals controlUnit(uint8_t opcode) {
 
         case 0x02:  // J
             s.jump     = true;
-            break;
-
-        // NOP — everything stays false/0
-        case 0x00 + 0x00:
             break;
     }
     return s;
