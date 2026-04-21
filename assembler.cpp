@@ -67,13 +67,39 @@ class assembler {
     public:
 
         void process_assembly_file(std::string filename) {
-            std::string line;
-            std::ifstream instruction_file(filename);
+            /////////////////////////////////////////////////////////////////////////////////////////////
+            // OPEN INPUT AND OUTPUT FILES
 
-            // FIXME: This doesn't actually read through the file yet.
-            while (!filename.eof()) {
+            // create input and output filenames
+            string input_filename = filename;
+            string output_filename = "program.bin";
+
+            // create input and output files streams
+            std::ofstream output;
+            std::ifstream input;
+
+
+            // open input stream for reading
+            input.open(input_filename);
+            if (!input.is_open()) {
+                cerr << "Could not open input file " << input_filename << ". Exiting ..." << endl;
+                exit(0);
+            }
+
+            /* open output file stream for writing */
+            output.open(output_filename);
+            if (!output.is_open()) {
+                cerr << "Could not open output file " << output_filename << ". Exiting ..." << endl;
+                exit(0);
+            }
+
+            /////////////////////////////////////////////////////////////////////////////////////////////
+            // READ ASSEMBLY FILE LINE BY LINE, ASSEMBLE INSTRUCTIONS, AND WRITE TO OUTPUT FILE
+
+            // FIXME: I need a first pass for my labels and a second pass for my instructions
+            while (!input.eof()) {
                 std::string instruction_line = "";
-                std::getline(instruction_file, instruction_line);
+                std::getline(input, instruction_line);
 
                 // Track Instruction index for Branch and Jump Instructions
                 
@@ -86,10 +112,27 @@ class assembler {
                     label_addresses[label] = instruction_count * 4; // Store the instruction index for the label
                 }
                 else {
+                    // Increment instruction count for each instruction (not labels)
                     instruction_count++;
+
+                    // Assemble the instruction into binary
                     uint32_t instruction_binary = assemble_instruction(line);
-                    // TODO: Write instruction to binary output file
+
+                    // Convert from little endian to big endian and write to output file
+                    unsigned char bytes[4];
+                    bytes[0] = (instruction_binary >> 24) & 0xFF;
+                    bytes[1] = (instruction_binary >> 16) & 0xFF;
+                    bytes[2] = (instruction_binary >> 8)  & 0xFF;
+                    bytes[3] = (instruction_binary)       & 0xFF;
+
+                    output.write(reinterpret_cast<char*>(bytes), 4);
                 }
+
+            /////////////////////////////////////////////////////////////////////////////////////////////
+            // CLOSE FILE STREAMS
+
+            output.close();
+            input.close();
             }
         }
 
