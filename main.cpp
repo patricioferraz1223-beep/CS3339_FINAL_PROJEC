@@ -118,7 +118,7 @@ QUESTIONS:
     - INPUT: 32-bit address
     - OUTPUT: 32-bit instruction address 
 //////////////////////////////////////////////////////////////////////////////////////////*/
-unint32_t program_counter(uint32_t address) {
+uint32_t program_counter(uint32_t address) {
     // For this project, the program counter will simply output the address given to it.
     return address;
 }
