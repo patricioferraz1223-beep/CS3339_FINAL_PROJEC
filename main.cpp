@@ -1,5 +1,19 @@
 #include <iostream>
 #include <unordered_map>
+#include <cstdint>
+
+#include "Program_Counter.cpp"
+#include "ALU.cpp"
+#include "ALU_Control.cpp"
+#include "Adder.cpp"
+#include "Register_File.cpp"
+#include "Shift_Left_2.cpp"
+#include "Sign_Extender.cpp"
+#include "MUX.h"
+#include "DataMemory.h"
+#include "ControlUnit.h"
+
+using namespace std;
 /*/////////////////////////////////////////////////////////////////////////////////////////
 While there are remaining instructions:
 - Program counter outputs the address of the current instruction
