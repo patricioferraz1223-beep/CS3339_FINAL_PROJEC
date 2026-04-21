@@ -95,8 +95,27 @@ class assembler {
 
             /////////////////////////////////////////////////////////////////////////////////////////////
             // READ ASSEMBLY FILE LINE BY LINE, ASSEMBLE INSTRUCTIONS, AND WRITE TO OUTPUT FILE
-
             // FIXME: I need a first pass for my labels and a second pass for my instructions
+
+            // First pass: increment instruction count, loading labels into the address table
+            while (!input.eof()) {
+                std::string instruction_line = "";
+                std::getline(input, instruction_line);
+
+                // Track Instruction index for Branch and Jump Instructions
+                
+                std::string label;
+                instruction_line = label; 
+                int line_length = instruction_line.length();
+
+                // Check line if label, else instruction
+                if (line_length > 0 && instruction_line[line_length - 1] == ':') { // Check if the line ends with a colon, indicating it's a label
+                    label_addresses[label] = instruction_count * 4; // Store the instruction index for the label
+                }
+                else instruction_count++; // Increment instruction count for each instruction (not labels)
+                
+            }
+
             while (!input.eof()) {
                 std::string instruction_line = "";
                 std::getline(input, instruction_line);
@@ -108,13 +127,12 @@ class assembler {
 
                 // TODO: Really, the last char should be ':' and this determines if it's a label or not
                 // TODO: I also need to either deal with a label or process an instruction
-                if (label == "LOOP" || label == "END" || label == "START") { // Example labels
-                    label_addresses[label] = instruction_count * 4; // Store the instruction index for the label
+                if (line_length > 0 && instruction_line[line_length - 1] == ':') { // Example labels
+                    // label_addresses[label] = instruction_count * 4; // Store the instruction index for the label
+                    
+                    // Do nothing
                 }
                 else {
-                    // Increment instruction count for each instruction (not labels)
-                    instruction_count++;
-
                     // Assemble the instruction into binary
                     uint32_t instruction_binary = assemble_instruction(line);
 
