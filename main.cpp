@@ -234,6 +234,10 @@ int main() {
         uint32_t instruction = instr_mem.read_address(instruction_address); // Fetch instruction from memory
 
         // Stage 2: Instruction Decode Stage
+
+        // MUX 1 — which register gets the result?
+        int writeReg = mux<int>(rt, rd, ctrl.regDst);
+
         
         // Load instruction into the Register file and output the read addresses
         // sr_instruction -> Register_file;
@@ -252,11 +256,20 @@ int main() {
         // Send SL2 output and PC+4 to Adder for branch address calculation
         // Send Mux2 output and Read Data 1 to ALU for execution
 
+        // MUX 2 — does ALU use register or immediate?
+        int aluInput2 = mux<int>(readData2, signExtended, ctrl.aluSrc);
+
         // Stage 4: Memory Access
+        
+        // MUX 3 — does PC go to next line or branch?
+        int nextPC = mux<int>(pc4, branchAddr, takeBranch);
 
         // Send ALU output and write data address to DMem
 
         // Stage 5: Write Back
+
+        // MUX 4 — does result come from ALU or memory?
+        int writeData = mux<int>(aluResult, memReadData, ctrl.memToReg);
 
         // Send DMem output and ALU output to Mux4 for selecting write back data
 
