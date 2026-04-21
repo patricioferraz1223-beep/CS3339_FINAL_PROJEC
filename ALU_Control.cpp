@@ -3,7 +3,6 @@ uint8_t alu_control(uint8_t alu_op, uint8_t funct) {
     if (alu_op == 0b00) return 0b0010; //Load -> Add
     if (alu_op == 0b01) return 0b0110; //Branch -> Subtract
     
-    //Not the only way to design an ALU! Can also use binary operations (e.g: a+b)
     if (alu_op == 0b10) {
         //Logic performed ONLY using registers
         switch(funct) {
