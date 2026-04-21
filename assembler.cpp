@@ -61,6 +61,8 @@ I think the assembler can be its own function, while the instruction memory has 
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
+#include <cstdlib>   
+#include "assembler.h"
 
 class assembler {
     
