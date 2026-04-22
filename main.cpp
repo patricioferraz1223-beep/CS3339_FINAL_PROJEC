@@ -118,10 +118,8 @@ QUESTIONS:
     - INPUT: 32-bit address
     - OUTPUT: 32-bit instruction address 
 //////////////////////////////////////////////////////////////////////////////////////////*/
-uint32_t program_counter(uint32_t address) {
-    // For this project, the program counter will simply output the address given to it.
-    return address;
-}
+
+// For this project, the program counter will simply output the address given to it.
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
 // FIXME: Not implemented    
@@ -213,7 +211,7 @@ int main() {
     uint32_t dmem_address = 0;
 
     // Intialize Modules
-    program_counter     PC;
+    ProgramCounter      PC;
     InstructionMemory   IMem;
     register_file       RegFile;
     mux1                M1;
