@@ -1,6 +1,3 @@
-#ifndef CONTROLUNIT_H
-#define CONTROLUNIT_H
-
 #include <cstdint>
 #include <iostream>
 using namespace std;
@@ -67,5 +64,3 @@ ControlSignals controlUnit(uint8_t opcode) {
     }
     return s;
 }
-
-#endif

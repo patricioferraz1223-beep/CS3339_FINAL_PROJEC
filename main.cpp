@@ -10,8 +10,8 @@
 #include "Shift_Left_2.cpp"
 #include "Sign_Extender.cpp"
 #include "MUX.h"
-#include "DataMemory.h"
-#include "ControlUnit.h"
+#include "DataMemory.cpp"
+#include "ControlUnit.cpp"
 
 using namespace std;
 /*/////////////////////////////////////////////////////////////////////////////////////////
