@@ -268,6 +268,9 @@ int main() {
         id_ex_current = id_ex_next;
         ex_mem_current = ex_mem_next;
         mem_wb_current = mem_wb_next;
+
+        // Keep zero register hardwired to 0
+        RegFile.write(0, 0, true);
         
     } // end of while loop
 
