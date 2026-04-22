@@ -33,6 +33,9 @@ Architecture design:
 
 using namespace std;
 
+assembler::assembler(bool debug) {
+    assembler::debug = debug;
+}
 
 void assembler::process_assembly_file(std::string filename) {
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,7 +48,6 @@ void assembler::process_assembly_file(std::string filename) {
     // create input and output files streams
     std::ofstream output;
     std::ifstream input;
-
 
     // open input stream for reading
     input.open(input_filename);
@@ -61,37 +63,47 @@ void assembler::process_assembly_file(std::string filename) {
         exit(0);
     }
 
+    if (assembler::debug) {
+        cout << "Input file successfully opened: " << input_filename << endl;
+        cout << "Output file successfully opened: " << output_filename << endl;
+    }
+
+    std::string instruction_line = "";
+
     /////////////////////////////////////////////////////////////////////////////////////////////
     // READ ASSEMBLY FILE LINE BY LINE, ASSEMBLE INSTRUCTIONS, AND WRITE TO OUTPUT FILE
     // FIXME: I need a first pass for my labels and a second pass for my instructions
 
     // First pass: increment instruction count, loading labels into the address table
-    while (!input.eof()) {
-        std::string instruction_line = "";
-        std::getline(input, instruction_line);
+    while (std::getline(input, instruction_line)) {
+        if (assembler::debug) cout << "First pass: reading instruction " << assembler::instruction_count << endl;
 
         // Track Instruction index for Branch and Jump Instructions
         
         std::string label;
-        instruction_line = label; 
+        label = instruction_line; 
         int line_length = instruction_line.length();
 
         // Check line if label, else instruction
         if (line_length > 0 && instruction_line[line_length - 1] == ':') { // Check if the line ends with a colon, indicating it's a label
+            // FIXME: I think i need to store all but the last char of the label, otherwise the label will include the colon and not match the label used in the instruction
             label_addresses[label] = instruction_count * 4; // Store the instruction index for the label
         }
         else instruction_count++; // Increment instruction count for each instruction (not labels)
         
     }
 
-    while (!input.eof()) {
-        std::string instruction_line = "";
-        std::getline(input, instruction_line);
+    input.clear();        // clear EOF flag
+    input.seekg(0);       // go back to beginning
+
+    int i = 0;
+    while (std::getline(input, instruction_line)) {
+        if (assembler::debug) cout << "Second pass: reading instruction " << i << endl;
 
         // Track Instruction index for Branch and Jump Instructions
         
         std::string label;
-        instruction_line = label; 
+        label = instruction_line; 
         int line_length = instruction_line.length();
 
         // TODO: Really, the last char should be ':' and this determines if it's a label or not
@@ -118,9 +130,12 @@ void assembler::process_assembly_file(std::string filename) {
     /////////////////////////////////////////////////////////////////////////////////////////////
     // CLOSE FILE STREAMS
 
+    i++;
+
+    }
+
     output.close();
     input.close();
-    }
 }
 
 
@@ -141,6 +156,8 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
     opcode = funct = shamt = rs = rt = rd = 0;
 
     if (op == "ADD") { // ADD rd, rs, rt
+        if (assembler::debug) cout << "Assembling ADD instruction: " << instruction_line << endl;
+
         // rd = rs + rt
         funct = 0x20;                 // function
         opcode = 0x00;
@@ -159,10 +176,14 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
     }
     // TODO: Implement this
     else if (op == "ADDI") { // ADDI rt, rs, imm
+        if (assembler::debug) cout << "Assembling ADDI instruction: " << instruction_line << endl;
+
         // rt = rs + imm
         instruction_binary |= 0x08;   // opcode
     }
     else if (op == "SUB") { // SUB rd, rs, rt
+        if (assembler::debug) cout << "Assembling SUB instruction: " << instruction_line << endl;
+
         // rd = rs - rt
         funct = 0x22;                 // function
         opcode = 0x00;
@@ -180,6 +201,8 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         instruction_binary |= (funct);
     }
     else if (op == "MUL") { // MUL rd, rs, rt
+        if (assembler::debug) cout << "Assembling MUL instruction: " << instruction_line << endl;
+
         // rd = rs * rt
         // WARNING: depends on which MIPS variant your class is using
         // If your class treats MUL like a normal 3-register ALU op, this may differ.
@@ -199,6 +222,8 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         instruction_binary |= (funct);
     }
     else if (op == "AND") { // AND rd, rs, rt
+        if (assembler::debug) cout << "Assembling AND instruction: " << instruction_line << endl;
+
         // rd = rs & rt
         funct = 0x24;                 // function
         opcode = 0x00;
@@ -216,6 +241,8 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         instruction_binary |= (funct);
     }
     else if (op == "OR") { // OR rd, rs, rt
+        if (assembler::debug) cout << "Assembling OR instruction: " << instruction_line << endl;
+
         // rd = rs | rt
         funct = 0x25;                 // function
         opcode = 0x00;
@@ -234,6 +261,8 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
     }
     // FIXME: I need to set shift amount
     else if (op == "SLL") { // SLL rd, rt, shamt
+        if (assembler::debug) cout << "Assembling SLL instruction: " << instruction_line << endl;
+
         // rd = rt << shamt
         funct = 0x00;                 // function
         opcode = 0x00;
@@ -252,6 +281,8 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
     }
     // FIXME: I need to set shift amount
     else if (op == "SRL") { // SRL rd, rt, shamt
+        if (assembler::debug) cout << "Assembling SRL instruction: " << instruction_line << endl;
+
         // rd = rt >> shamt
         funct = 0x02;                 // function
         opcode = 0x00;
@@ -270,15 +301,21 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
     }
     // TODO: Implement this 
     else if (op == "LW") { // LW rt, offset(base)
+        if (assembler::debug) cout << "Assembling LW instruction: " << instruction_line << endl;
+
         // rt = Memory[base + offset]
         instruction_binary |= 0x23;   // opcode
     }
     // TODO: Implement this
     else if (op == "SW") { // SW rt, offset(base)
+        if (assembler::debug) cout << "Assembling SW instruction: " << instruction_line << endl;
+
         // Memory[base + offset] = rt
         instruction_binary |= 0x2B;   // opcode
     }
     else if (op == "BEQ") { // BEQ rs, rt, offset/label/immediate
+        if (assembler::debug) cout << "Assembling BEQ instruction: " << instruction_line << endl;
+
         // if (rs == rt) then PC = PC + offset
         opcode = 0x04;   // opcode
         std::string label = r3; // Assuming the label is the third operand
@@ -310,6 +347,7 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
 
     }
     else if (op == "J") { // J target
+        if (assembler::debug) cout << "Assembling J instruction: " << instruction_line << endl;
         // PC = target
         opcode = 0x02;   // opcode
         std::string label = r1;
@@ -334,6 +372,8 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         instruction_binary |= label_address; // Assuming label_address is the target address
     }
     else if (op == "NOP") { // NOP
+        if (assembler::debug) cout << "Assembling NOP instruction: " << instruction_line << endl;
+
         // NOP = SLL $0, $0, 0
         instruction_binary = 0;    
     }    
