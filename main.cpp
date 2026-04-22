@@ -270,11 +270,16 @@ int main() {
 
         // Send DMem output and ALU output to Mux4 for selecting write back data
 
+        // End of loop
+
         // Load values into state registers for the next stage
         if_id_current = if_id_next;
         id_ex_current = id_ex_next;
         ex_mem_current = ex_mem_next;
         mem_wb_current = mem_wb_next;
+
+        //Increment program counter
+        PC.update(nextPC);
 
         // Keep zero register hardwired to 0
         RegFile.write(0, 0, true);
