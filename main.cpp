@@ -169,7 +169,7 @@ uint8_t mux1(uint8_t input1, uint8_t input2, bool control_signal) {
     - INPUT: bits 15-0 of instruction
     - OUTPUT: 32-bit sign-extended value
 //////////////////////////////////////////////////////////////////////////////////////////*/
-uint32_t sign_enxtender(uint16_t input) {
+uint32_t sign_extender(uint16_t input) {
     return 0; 
 }
 
@@ -192,7 +192,7 @@ class register_file {
 
     public:
         uint64_t read_instructions(uint8_t read_data_1, uint8_t read_data_2, uint8_t write_addr, uint32_t write_data, bool control_signal);
-}
+};
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////*/
@@ -217,7 +217,7 @@ int main() {
     InstructionMemory   IMem;
     register_file       RegFile;
     mux1                M1;
-    sign_enxtender      SE;
+    sign_extender      SE;
 
     while (true){   // FIXME: set condition (while instructions remain)
 
