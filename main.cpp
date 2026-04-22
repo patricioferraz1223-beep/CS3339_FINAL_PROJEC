@@ -186,6 +186,23 @@ int main() {
     // Declare state registers for each stage of the pipeline
     // FIXME: I need to change these types, theyre not all accurate
     // QUESTION: Do we need to store PC output in a state register? 
+    
+    struct sr_IF_ID {
+
+    };
+
+    struct sr_ID_EX {
+
+    };
+
+    struct sr_EX_MEM {
+
+    };
+
+    struct sr_MEM_WB {
+
+    };
+
     uint32_t sr_imem_out = 0;
 
     uint32_t sr_reg_file_out_1 = 0;
