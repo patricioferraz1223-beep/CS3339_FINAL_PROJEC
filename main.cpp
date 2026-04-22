@@ -188,19 +188,40 @@ int main() {
     // QUESTION: Do we need to store PC output in a state register? 
     
     struct sr_IF_ID {
-
+        uint32_t instruction = 0;
+        uint32_t pcPlus4 = 0;
     };
 
     struct sr_ID_EX {
-
+        uint32_t readData1 = 0;
+        uint32_t readData2 = 0;
+        uint32_t signExtended = 0;
+        uint8_t rs = 0;
+        uint8_t rt = 0;
+        uint8_t rd = 0;
+        ControlSignals ctrl = {0};
     };
 
     struct sr_EX_MEM {
+        uint32_t aluResult = 0;
+        uint32_t writeData = 0;
+        uint8_t writeReg = 0;
+        bool zeroFlag = false;
 
+        bool memRead = false;
+        bool memWrite = false;
+        bool branch = false;
+        bool memToReg = false;
+        bool regWrite = false;
     };
 
     struct sr_MEM_WB {
+        uint32_t readData = 0;
+        uint32_t aluResult = 0;
+        uint8_t writeReg = 0;
 
+        bool memToReg = false;
+        bool regWrite = false;
     };
 
     uint32_t sr_imem_out = 0;
