@@ -1,0 +1,5 @@
+#include <cstdint>
+
+uint32_t sign_extender(uint16_t input) {
+    return (uint32_t)(int32_t)(int16_t)input;
+}
