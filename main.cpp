@@ -233,6 +233,7 @@ int main() {
 
         // Stage 2: Instruction Decode Stage
         // Take values from state register
+        uint32_t instruction_to_decode = if_id_current.instruction;
 
         // MUX 1 — which register gets the result?
         int writeReg = mux<int>(rt, rd, ctrl.regDst);
