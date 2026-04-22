@@ -102,10 +102,10 @@ ALU Control Encoding Example:
 
 
 QUESTIONS:
-1. How many output bits are there from the control unit?
-2. Does each stage need to be parallelized for the sake of simulating pipelining? 
+1. How many output bits are there from the control unit? 10
+2. Does each stage need to be parallelized for the sake of simulating pipelining? Not literally, but state registers are needed
 3. If the PC isn't what actually holds the instructions nor increments the instruction 
-    address, what does it do?
+    address, what does it do? it holds the address of the instructions
 3.1 On the same note, what is the input to the adder in the IF stage?
 4. What is the 0 flag in the ALU?
 5. Do we not care about the overflow flag in the ALU for this project?
