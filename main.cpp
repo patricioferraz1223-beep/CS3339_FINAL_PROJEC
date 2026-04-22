@@ -218,10 +218,17 @@ int main() {
         // Stage 1: Fetch Stage
 
         // Take PC output and feed it into IMem to get instruction
-        uint32_t instruction_address = PC.get_address();
+        uint32_t current_instruction_address = PC.get_address();
 
         // Read address from IMemand 
-        uint32_t instruction = IMem.read_address(instruction_address); // Fetch instruction from memory
+        uint32_t current_instruction = IMem.read_address(current_instruction_address); // Fetch instruction from memory
+
+        // Increment PC
+        uint32_t pc_plus_4 = current_instruction_address + 4;
+
+        // Load values into state register
+        if_id_next.instruction = current_instruction;
+        if_id_next.pcPlus4 = pc_plus_4;
 
         // Stage 2: Instruction Decode Stage
 
