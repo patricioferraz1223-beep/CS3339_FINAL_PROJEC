@@ -214,6 +214,7 @@ int main() {
 
         // FIXME: I haven't included the mux that selects between the branch address and 
         //  the next sequential address for the PC input
+        // Pretty sure the above issue is solved with the nextPC mux.
 
         // Stage 1: Fetch Stage
 
@@ -231,6 +232,7 @@ int main() {
         if_id_next.pcPlus4 = pc_plus_4;
 
         // Stage 2: Instruction Decode Stage
+        // Take values from state register
 
         // MUX 1 — which register gets the result?
         int writeReg = mux<int>(rt, rd, ctrl.regDst);
