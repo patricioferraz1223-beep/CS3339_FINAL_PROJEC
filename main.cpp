@@ -245,6 +245,16 @@ int main() {
     RegisterFile       RegFile;
     DataMemory         DMem;
 
+    //Initialize state registers
+    sr_IF_ID    if_id_current,
+                if_id_next;
+    sr_ID_EX    id_ex_current,
+                id_ex_next;
+    sr_EX_MEM   ex_mem_current,
+                ex_mem_next;
+    sr_MEM_WB   mem_wb_current,
+                mem_wb_next;
+
     while (true){   // FIXME: set condition (while instructions remain)
 
         // FIXME: I haven't included the mux that selects between the branch address and 
