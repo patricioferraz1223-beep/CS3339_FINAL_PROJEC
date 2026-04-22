@@ -297,7 +297,7 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         opcode = 0x00;
         rs = 0;
 
-        shamt = (assembler::parse_register(r3));
+        shamt = std::stoi(r3);
         rt = assembler::parse_register(r2);
         rd = assembler::parse_register(r1);
 
@@ -317,7 +317,7 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         opcode = 0x00;
         rs = 0;
 
-        shamt = (assembler::parse_register(r3));
+        shamt = std::stoi(r3);
         rt = assembler::parse_register(r2);
         rd = assembler::parse_register(r1);
 
