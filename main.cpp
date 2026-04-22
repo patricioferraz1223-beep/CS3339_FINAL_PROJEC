@@ -155,10 +155,7 @@ class InstructionMemory {
     - INPUT: Control Unit output
     - OUTPUT: 8-bit value ()
 //////////////////////////////////////////////////////////////////////////////////////////*/
-uint8_t mux1(uint8_t input1, uint8_t input2, bool control_signal) {
-    // For this project, we will return one of the inputs based on the control signal.
-    return control_signal ? input1 : input2;
-}
+
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
 // FIXME: Not implemented    
