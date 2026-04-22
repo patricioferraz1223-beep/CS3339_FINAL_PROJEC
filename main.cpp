@@ -207,8 +207,6 @@ int main() {
     ProgramCounter      PC;
     InstructionMemory   IMem;
     RegisterFile       RegFile;
-    mux1                M1;
-    sign_extender      SE;
 
     while (true){   // FIXME: set condition (while instructions remain)
 
