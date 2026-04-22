@@ -310,6 +310,10 @@ int main() {
         // Send DMem output and ALU output to Mux4 for selecting write back data
 
         // Load values into state registers for the next stage
+        if_id_current = if_id_next;
+        id_ex_current = id_ex_next;
+        ex_mem_current = ex_mem_next;
+        mem_wb_current = mem_wb_next;
         
     } // end of while loop
 
