@@ -218,11 +218,10 @@ int main() {
         // Stage 1: Fetch Stage
 
         // Take PC output and feed it into IMem to get instruction
-        uint32_t instruction_address = PC.get_address(); // Example usage of program counter
-        InstructionMemory instr_mem;
+        uint32_t instruction_address = PC.get_address();
 
         // Read address from IMemand 
-        uint32_t instruction = instr_mem.read_address(instruction_address); // Fetch instruction from memory
+        uint32_t instruction = IMem.read_address(instruction_address); // Fetch instruction from memory
 
         // Stage 2: Instruction Decode Stage
 
