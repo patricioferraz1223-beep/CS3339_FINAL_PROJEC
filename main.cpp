@@ -204,6 +204,7 @@ int main() {
     ProgramCounter      PC;
     InstructionMemory   IMem;
     RegisterFile       RegFile;
+    DataMemory         DMem;
 
     while (true){   // FIXME: set condition (while instructions remain)
 
