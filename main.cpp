@@ -258,7 +258,8 @@ int main() {
         // Send DMem output and ALU output to Mux4 for selecting write back data
 
         // Load values into state registers for the next stage
-    }
+        
+    } // end of while loop
 
     
 
