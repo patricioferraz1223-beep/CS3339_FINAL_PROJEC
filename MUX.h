@@ -2,6 +2,19 @@
 // A MUX takes 2 inputs and a control signal
 // and outputs one of the inputs based on the signal
 
+/*/////////////////////////////////////////////////////////////////////////////////////////
+// NOTE: This could be a general mux type that uses templating so we can apply it in 
+//  different contexts.
+
+
+    Mux 1:
+    - This mux Sets the destination register for writing back results in the WB stage.
+    - INPUT: bits 15-11 of instruction
+    - INPUT: bits 20-16 of instruction
+    - INPUT: Control Unit output
+    - OUTPUT: 8-bit value ()
+//////////////////////////////////////////////////////////////////////////////////////////*/
+
 #ifndef MUX_H
 #define MUX_H
 

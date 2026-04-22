@@ -1,3 +1,15 @@
+/*/////////////////////////////////////////////////////////////////////////////////////////
+    Register File:
+    - INPUT: bits 25-21 of instruction (Read Addr 1)
+    - INPUT: bits 20-16 of instruction (Read Addr 2)
+    - INPUT: Write address (Mux 1 output), 5 bits
+    - INPUT: Write Data (32 bits, from WB stage)
+    - INPUT: Control Unit output
+    - OUTPUT: Read Data 1 (32 bits)
+    - OUTPUT: Read Data 2 (32 bits)
+//////////////////////////////////////////////////////////////////////////////////////////*/
+
+
 class RegisterFile 
 {
 private:
