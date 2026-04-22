@@ -224,6 +224,9 @@ int main() {
         bool regWrite = false;
     };
 
+    // OLD state register variables. Commenting out but keeping them
+    // in case there are mistakes in the structs
+    /*
     uint32_t sr_imem_out = 0;
 
     uint32_t sr_reg_file_out_1 = 0;
@@ -234,6 +237,7 @@ int main() {
 
     uint32_t sr_dmem_out = 0;
     uint32_t dmem_address = 0;
+    */
 
     // Intialize Modules
     ProgramCounter      PC;
