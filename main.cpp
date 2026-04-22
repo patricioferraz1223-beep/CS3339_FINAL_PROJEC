@@ -183,14 +183,7 @@ uint32_t sign_extender(uint16_t input) {
     - OUTPUT: Read Data 1 (32 bits)
     - OUTPUT: Read Data 2 (32 bits)
 //////////////////////////////////////////////////////////////////////////////////////////*/
-class register_file {
-    private:
-        int memory_amount = 32; // Number of registers
-        uint32_t registers[memory_amount]; // Register number to value mapping
 
-    public:
-        uint64_t read_instructions(uint8_t read_data_1, uint8_t read_data_2, uint8_t write_addr, uint32_t write_data, bool control_signal);
-};
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////*/
@@ -213,7 +206,7 @@ int main() {
     // Intialize Modules
     ProgramCounter      PC;
     InstructionMemory   IMem;
-    register_file       RegFile;
+    RegisterFile       RegFile;
     mux1                M1;
     sign_extender      SE;
 
