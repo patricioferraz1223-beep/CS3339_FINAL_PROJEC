@@ -33,10 +33,13 @@ Architecture design:
 
 using namespace std;
 
+/////////////////////////////////////////////////////////////////////////////////////////////
 assembler::assembler(bool debug) {
     assembler::debug = debug;
 }
+/////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////////////////////////////
 void assembler::process_assembly_file(std::string filename) {
     /////////////////////////////////////////////////////////////////////////////////////////////
     // OPEN INPUT AND OUTPUT FILES
@@ -117,6 +120,8 @@ void assembler::process_assembly_file(std::string filename) {
             // Assemble the instruction into binary
             uint32_t instruction_binary = assembler::assemble_instruction(instruction_line);
 
+            if (assembler::debug) cout << "Are we even trying to write to output?" << endl;
+
             // Convert from little endian to big endian and write to output file
             unsigned char bytes[4];
             bytes[0] = (instruction_binary >> 24) & 0xFF;
@@ -124,6 +129,8 @@ void assembler::process_assembly_file(std::string filename) {
             bytes[2] = (instruction_binary >> 8)  & 0xFF;
             bytes[3] = (instruction_binary)       & 0xFF;
 
+            if (assembler::debug) cout << endl << "Instruction: " << instruction_line << " -> 0x" << hex << instruction_binary << dec << endl;
+            
             output.write(reinterpret_cast<char*>(bytes), 4);
         }
 
@@ -138,12 +145,32 @@ void assembler::process_assembly_file(std::string filename) {
     input.close();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// handle the temporary registers, the stack pointer, the return address, and the constant 
+//  0 register. 
 
-int assembler::reg_to_int(std::string reg) {
-    // assumes format "R<number>"
-    return std::stoi(reg.substr(1));
+// - Assume Named MIPS register format, ignore '$'
+// - then if the rest of the string is sp, we can map it to 29. 
+// - If it sees ra, we can map it to 31. 
+// - if it sees zero, we can map it to 0. 
+// - Then, the temporary registers are the default condition in our case statement, and we 
+//      can call string to int.
+/////////////////////////////////////////////////////////////////////////////////////////////
+int assembler::parse_register(std::string szRegister) {
+    std::string reg = szRegister.substr(1);
+
+    if (reg == "sp") return 29;
+    else if (reg == "ra") return 31;
+    else if (reg == "zero") return 0;
+    else if (reg == "t8") return 24;
+    else if (reg == "t9") return 25;
+    else return (std::stoi(reg.substr(1)) + 8); // Convert the register number to an integer, ignoring the '$' character
 }
+/////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////////////
 // FIXME: I still need to deal with special registers
 uint32_t assembler::assemble_instruction (std::string instruction_line) {
 
@@ -155,6 +182,8 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
     uint32_t rs, rt, rd;
     opcode = funct = shamt = rs = rt = rd = 0;
 
+    // FIXME: I have a few encoders to finish (ex: intermediates)
+    // FIXME: I still need to deal with special registers
     if (op == "ADD") { // ADD rd, rs, rt
         if (assembler::debug) cout << "Assembling ADD instruction: " << instruction_line << endl;
 
@@ -163,9 +192,9 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         opcode = 0x00;
         shamt  = 0;
 
-        rs = assembler::reg_to_int(r2);
-        rt = assembler::reg_to_int(r3);
-        rd = assembler::reg_to_int(r1);
+        rs = assembler::parse_register(r2);
+        rt = assembler::parse_register(r3);
+        rd = assembler::parse_register(r1);
 
         instruction_binary |= (opcode << 26);
         instruction_binary |= (rs     << 21);
@@ -189,9 +218,9 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         opcode = 0x00;
         shamt  = 0;
 
-        rs = assembler::reg_to_int(r2);
-        rt = assembler::reg_to_int(r3);
-        rd = assembler::reg_to_int(r1);
+        rs = assembler::parse_register(r2);
+        rt = assembler::parse_register(r3);
+        rd = assembler::parse_register(r1);
 
         instruction_binary |= (opcode << 26);
         instruction_binary |= (rs     << 21);
@@ -210,9 +239,9 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         opcode = 0x1C;
         shamt  = 0;
 
-        rs = assembler::reg_to_int(r2);
-        rt = assembler::reg_to_int(r3);
-        rd = assembler::reg_to_int(r1);
+        rs = assembler::parse_register(r2);
+        rt = assembler::parse_register(r3);
+        rd = assembler::parse_register(r1);
 
         instruction_binary |= (opcode << 26);
         instruction_binary |= (rs     << 21);
@@ -229,9 +258,9 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         opcode = 0x00;
         shamt  = 0;
 
-        rs = assembler::reg_to_int(r2);
-        rt = assembler::reg_to_int(r3);
-        rd = assembler::reg_to_int(r1);
+        rs = assembler::parse_register(r2);
+        rt = assembler::parse_register(r3);
+        rd = assembler::parse_register(r1);
 
         instruction_binary |= (opcode << 26);
         instruction_binary |= (rs     << 21);
@@ -248,9 +277,9 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         opcode = 0x00;
         shamt  = 0;
 
-        rs = assembler::reg_to_int(r2);
-        rt = assembler::reg_to_int(r3);
-        rd = assembler::reg_to_int(r1);
+        rs = assembler::parse_register(r2);
+        rt = assembler::parse_register(r3);
+        rd = assembler::parse_register(r1);
 
         instruction_binary |= (opcode << 26);
         instruction_binary |= (rs     << 21);
@@ -268,9 +297,9 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         opcode = 0x00;
         rs = 0;
 
-        shamt = (assembler::reg_to_int(r3));
-        rt = assembler::reg_to_int(r2);
-        rd = assembler::reg_to_int(r1);
+        shamt = (assembler::parse_register(r3));
+        rt = assembler::parse_register(r2);
+        rd = assembler::parse_register(r1);
 
         instruction_binary |= (opcode << 26);
         instruction_binary |= (rs     << 21);
@@ -288,9 +317,9 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         opcode = 0x00;
         rs = 0;
 
-        shamt = (assembler::reg_to_int(r3));
-        rt = assembler::reg_to_int(r2);
-        rd = assembler::reg_to_int(r1);
+        shamt = (assembler::parse_register(r3));
+        rt = assembler::parse_register(r2);
+        rd = assembler::parse_register(r1);
 
         instruction_binary |= (opcode << 26);
         instruction_binary |= (rs     << 21);
@@ -337,8 +366,8 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         int32_t offset = (label_address - (current_address + 4)) / 4;
         offset &= 0xFFFF; // Ensure offset is 16 bits
 
-        rs = reg_to_int(r1);
-        rt = reg_to_int(r2);
+        rs = assembler::parse_register(r1);
+        rt = assembler::parse_register(r2);
 
         instruction_binary |= (opcode << 26);
         instruction_binary |= (rs     << 21);
@@ -383,3 +412,4 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
     
     return instruction_binary;
 }
+/////////////////////////////////////////////////////////////////////////////////////////////
