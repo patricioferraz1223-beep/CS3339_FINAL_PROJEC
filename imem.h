@@ -12,12 +12,15 @@
 class InstructionMemory {
     private:
         std::vector<uint8_t> imem_data; // Vector to hold the instruction memory data
-
         std::vector<uint8_t> load_binary(const std::string& filename);
+
+        
 
     public:
         InstructionMemory();
         InstructionMemory(const std::string& filename);
+
+        int get_size();
 
         uint32_t read_address(uint32_t address);
 

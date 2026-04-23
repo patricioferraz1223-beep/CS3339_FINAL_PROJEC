@@ -12,7 +12,7 @@
 #include "MUX.h"
 #include "DataMemory.cpp"
 #include "ControlUnit.cpp"
-#include "imem.cpp"
+#include "assembler.h"
 #include "imem.h"
 
 using namespace std;
@@ -121,6 +121,9 @@ int main() {
     // Declare state registers for each stage of the pipeline
     // FIXME: I need to change these types, theyre not all accurate
     // QUESTION: Do we need to store PC output in a state register? 
+
+    assembler my_assembler(false);      // Set to false to disable debug output from assembler
+    my_assembler.process_assembly_file("assembly_file.asm");    // Encode Assembly file
     
     struct sr_IF_ID {
         uint32_t instruction = 0;
@@ -181,7 +184,7 @@ int main() {
 
     // Intialize Modules
     ProgramCounter      PC;
-    InstructionMemory   IMem;
+    InstructionMemory   IMem("program.bin");   // Load instruction memory with encoded instructions from assembly file
     RegisterFile       RegFile;
     DataMemory         DMem;
 
@@ -198,7 +201,9 @@ int main() {
     // Instantiate MemtoReg Mux output here since its output is needed in the ID stage for writing to the register file
     uint32_t writeData = 0;
 
-    while (true){   // FIXME: set condition (while instructions remain)
+    int i = 0; // iterator
+
+    while (i < IMem.get_size()){   // FIXME: set condition (while instructions remain)
 
         // FIXME: I haven't included the mux that selects between the branch address and 
         //  the next sequential address for the PC input
