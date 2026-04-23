@@ -111,29 +111,6 @@ QUESTIONS:
 5. Do we not care about the overflow flag in the ALU for this project?
 //////////////////////////////////////////////////////////////////////////////////////////*/
 
-// For this project, the program counter will simply output the address given to it.
-
-/*/////////////////////////////////////////////////////////////////////////////////////////
-    Instruction Memory:
-    - INPUT: 32-bit instruction address (from PC)
-    - OUTPUT: 32-bit instruction
-//////////////////////////////////////////////////////////////////////////////////////////*/
-class InstructionMemory {
-    private:
-        unordered_map<uint32_t, uint32_t> memory; // Address to instruction mapping
-
-    public:
-        uint32_t read_address(uint32_t address) {
-            // For this project, we will return a dummy instruction based on the address.
-            // In a real implementation, this would access memory to fetch the instruction.
-            std::cout << "Instruction Memory reading address: " << std::hex << address << std::dec << "\n";
-            return 0xFFFFFFFF; // Example dummy instruction
-        }
-        void load_instructions(uint32_t address, uint32_t instruction) {
-        }
-};
-
-
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////*/
