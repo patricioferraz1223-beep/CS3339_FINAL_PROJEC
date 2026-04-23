@@ -12,7 +12,7 @@
 #include "MUX.h"
 #include "DataMemory.cpp"
 #include "ControlUnit.cpp"
-#include "imem.cpp"
+#include "assembler.h"
 #include "imem.h"
 
 using namespace std;
@@ -124,8 +124,6 @@ int main() {
 
     assembler my_assembler(false);      // Set to false to disable debug output from assembler
     my_assembler.process_assembly_file("assembly_file.asm");    // Encode Assembly file
-
-    InstructionMemory IMem("program.bin");   // Load instruction memory with encoded instructions from assembly file
     
     struct sr_IF_ID {
         uint32_t instruction = 0;
@@ -183,7 +181,7 @@ int main() {
 
     // Intialize Modules
     ProgramCounter      PC;
-    InstructionMemory   IMem;
+    InstructionMemory   IMem("program.bin");   // Load instruction memory with encoded instructions from assembly file
     RegisterFile       RegFile;
     DataMemory         DMem;
 
