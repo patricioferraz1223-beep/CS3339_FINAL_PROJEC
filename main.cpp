@@ -297,6 +297,14 @@ int main() {
 
         uint32_t mem_read_data = DMem.read(ex_mem_current.aluResult, ex_mem_current.memWrite);
 
+        // Load up state registers
+        mem_wb_next.readData = mem_read_data;
+        mem_wb_next.aluResult = ex_mem_current.aluResult;
+        mem_wb_next.writeReg = ex_mem_current.writeReg;
+
+        mem_wb_next.memToReg = ex_mem_current.memToReg;
+        mem_wb_next.regWrite = ex_mem_current.regWrite;
+
         // Stage 5: Write Back      //////////////////////////////////////////////////////////////////////////
 
         // MUX 4 — does result come from ALU or memory?
