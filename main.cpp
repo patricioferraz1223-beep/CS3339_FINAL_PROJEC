@@ -248,7 +248,9 @@ int main() {
         uint32_t data1, 
                  data2;
         RegFile.read(rs, rt, data1, data2);
-
+        // QUESTION: Should I write to R8?
+        RegFile.write(rd, writeData, id_ex_current.ctrl.regWrite); // Write back data from WB stage into register file
+         
         // Sign extend
         uint32_t extended_immediate = sign_extender(immediate);
 
