@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <cstdint>
+#include <iomanip>
 
 #include "Program_Counter.cpp"
 #include "ALU.cpp"
@@ -295,7 +296,7 @@ int main() {
         // Stage 4: Memory Access   //////////////////////////////////////////////////////////////////////////
         
         // MUX 3 — does PC go to next line or branch?
-        int nextPC = mux<int>(pc4, branchAddr, takeBranch);
+        // int nextPC = mux<int>(pc4, branchAddr, takeBranch);
 
         // Send ALU output and write data address to DMem
 
@@ -316,14 +317,14 @@ int main() {
         mem_wb_current = mem_wb_next;
 
         //Increment program counter
-        PC.update(nextPC);
+        // PC.update(nextPC);
 
         // Keep zero register hardwired to 0
         RegFile.write(0, 0, true);
         
     } // end of while loop
 
-    
+    RegFile.print_registers();
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
     While instructions remain
