@@ -246,7 +246,7 @@ int main() {
         uint32_t address = instruction_to_decode & 0x03FFFFFF;    // 25-0. used for J instructions
 
         // MUX 1 — which register gets the result?
-        int writeReg = mux<int>(rt, rd, ctrl.regDst);
+        uint8_t writeReg = mux<int>(rt, rd, controlUnit(opcode).regDst);
 
         
         // Load instruction into the Register file and output the read addresses
