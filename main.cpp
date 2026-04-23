@@ -126,6 +126,7 @@ class InstructionMemory {
         uint32_t read_address(uint32_t address) {
             // For this project, we will return a dummy instruction based on the address.
             // In a real implementation, this would access memory to fetch the instruction.
+            std::cout << "Instruction Memory reading address: " << std::hex << address << std::dec << "\n";
             return 0xFFFFFFFF; // Example dummy instruction
         }
         void load_instructions(uint32_t address, uint32_t instruction) {
