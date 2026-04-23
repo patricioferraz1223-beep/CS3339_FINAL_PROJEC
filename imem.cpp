@@ -1,0 +1,56 @@
+#include <fstream>
+#include <vector>
+#include <cstdint>
+
+
+/*/////////////////////////////////////////////////////////////////////////////////////////
+// FIXME: Not implemented    
+
+    Instruction Memory:
+    - INPUT: 32-bit instruction address (from PC)
+    - OUTPUT: 32-bit instruction
+//////////////////////////////////////////////////////////////////////////////////////////*/
+class InstructionMemory {
+    private:
+        std::vector<uint8_t> imem_data; // Vector to hold the instruction memory data
+
+    std::vector<uint8_t> load_binary(const std::string& filename) {
+        std::ifstream file(filename, std::ios::binary);
+
+        // Move to end to get file size
+        file.seekg(0, std::ios::end);
+        std::streamsize size = file.tellg();
+        file.seekg(0, std::ios::beg);
+
+        // Allocate buffer
+        std::vector<uint8_t> buffer(size);
+
+        // Read entire file
+        if (file.read(reinterpret_cast<char*>(buffer.data()), size)) {
+            return buffer;
+        }
+
+        throw std::runtime_error("Failed to read file");
+    }
+
+    public:
+        InstructionMemory() {}
+
+        InstructionMemory(const std::string& filename) {
+            load_instructions(filename);
+        }
+
+        uint32_t read_address(uint32_t address) {
+            uint32_t instr =
+                    (imem_data[address] << 24) |
+                    (imem_data[address + 1] << 16) |
+                    (imem_data[address + 2] << 8) |
+                    (imem_data[address + 3]);
+            return instr;
+        }
+        void load_instructions(const std::string& filename) {
+            // load binary file into array of bytes
+            imem_data = load_binary(filename);
+        }
+};
+
