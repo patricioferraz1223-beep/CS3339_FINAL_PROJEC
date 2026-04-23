@@ -37,6 +37,10 @@ std::vector<uint8_t> InstructionMemory::load_binary(const std::string& filename)
     throw std::runtime_error("Failed to read file");
 }
 
+int InstructionMemory::get_size() {
+    return imem_data.size();
+}
+
 InstructionMemory::InstructionMemory() {}
 
 InstructionMemory::InstructionMemory(const std::string& filename) {

@@ -200,7 +200,9 @@ int main() {
     // Instantiate MemtoReg Mux output here since its output is needed in the ID stage for writing to the register file
     uint32_t writeData = 0;
 
-    while (true){   // FIXME: set condition (while instructions remain)
+    int i = 0; // iterator
+
+    while (i < IMem.get_size()){   // FIXME: set condition (while instructions remain)
 
         // FIXME: I haven't included the mux that selects between the branch address and 
         //  the next sequential address for the PC input
