@@ -274,6 +274,12 @@ int main() {
         // Load Write Data (Read Data 2) into state register for memory access stage
         ex_mem_next.writeData = id_ex_current.readData2;
 
+        // Update control signals in EX/MEM state register for use in MEM and WB stages
+        ex_mem_next.memRead = id_ex_current.ctrl.memRead;
+        ex_mem_next.memWrite = id_ex_current.ctrl.memWrite;
+        ex_mem_next.branch = id_ex_current.ctrl.branch;
+        ex_mem_next.memToReg = id_ex_current.ctrl.memToReg;
+        ex_mem_next.regWrite = id_ex_current.ctrl.regWrite;
         // Stage 4: Memory Access   //////////////////////////////////////////////////////////////////////////
         
         // MUX 3 — does PC go to next line or branch?
