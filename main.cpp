@@ -249,16 +249,16 @@ int main() {
         ex_mem_next.branchAddr = adder(if_id_current.pcPlus4, sl2_out);
 
         // MUX (ALU Input): Send SE output and Read Data 2 to Mux2
-        uint32_t aluInput2 = mux<uint32_t>(id_ex_current.signExtended, id_ex_current.readData2, ctrl.aluSrc);
+        uint32_t aluInput2 = mux<uint32_t>(id_ex_current.signExtended, id_ex_current.readData2, id_ex_current.ctrl.aluSrc);
 
         // ALU Control: Send ALU control bits to ALU control to get ALU operation code
         uint8_t aluControlCode = alu_control(id_ex_current.ctrl.aluOp, funct); // For R-type, funct field determines AL
         
         // ALU: Send Mux2 output, Read Data 1, and ALU control to ALU for execution
-        mem_wb_next.aluResult = execute_alu(id_ex_current.readData1, aluInput2, aluControlCode);
+        mem_wb_next.aluResult = execute_alu(id_ex_current.readData1, aluInput2, aluControlCode, ex_mem_next.zeroFlag);
 
         // Load Write Data (Read Data 2) into state register for memory access stage
-        mem_wb_next.writeData = id_ex_current.readData2;
+        ex_mem_next.writeData = id_ex_current.readData2;
 
         // Stage 4: Memory Access   //////////////////////////////////////////////////////////////////////////
         
