@@ -1,0 +1,17 @@
+main:
+ADDI $t0 $zero 10
+NOP
+NOP
+NOP
+ADDI $t1 $zero 3
+NOP
+NOP
+NOP
+SLL  $t7 $t1 2
+NOP
+NOP
+NOP
+SRL  $s0 $t0 1
+NOP
+NOP
+NOP

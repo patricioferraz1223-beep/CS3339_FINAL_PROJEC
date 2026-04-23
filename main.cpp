@@ -128,9 +128,10 @@ int main() {
     // Declare state registers for each stage of the pipeline
     // FIXME: I need to change these types, theyre not all accurate
     // QUESTION: Do we need to store PC output in a state register? 
+    bool debug = false;
 
-    assembler my_assembler(false);      // Set to false to disable debug output from assembler
-    my_assembler.process_assembly_file("assembly_file.asm");    // Encode Assembly file
+    assembler my_assembler(debug);      // Set to false to disable debug output from assembler
+    my_assembler.process_assembly_file("shift_test.asm");    // Encode Assembly file
     
     struct sr_IF_ID {
         uint32_t instruction = 0;
@@ -302,12 +303,11 @@ int main() {
         // ALU Control: Send ALU control bits to ALU control to get ALU operation code
         uint8_t aluControlCode = alu_control(id_ex_current.ctrl.aluOp, id_ex_current.funct);
         
+        cout << "Iter " << iterations << ": ALU op=" << (int)aluControlCode << " A=" << id_ex_current.readData1 
+                << " B=" << aluInput2 << " regWrite=" << (int)id_ex_current.ctrl.regWrite << endl;
+
         // ALU: Send Mux2 output, Read Data 1, and ALU control to ALU for execution
-        if (iterations < 10) {
-            cout << "Iter " << iterations << ": ALU op=" << (int)aluControlCode << " A=" << id_ex_current.readData1 
-                 << " B=" << aluInput2 << " regWrite=" << (int)id_ex_current.ctrl.regWrite << endl;
-        }
-        ex_mem_next.aluResult = execute_alu(id_ex_current.readData1, aluInput2, aluControlCode, ex_mem_next.zeroFlag);
+        ex_mem_next.aluResult = execute_alu(id_ex_current.readData1, aluInput2, id_ex_current.shamt, aluControlCode, ex_mem_next.zeroFlag);
 
         // Load Write Data (Read Data 2) into state register for memory access stage
         ex_mem_next.writeData = id_ex_current.readData2;
@@ -347,7 +347,7 @@ int main() {
         writeData = mux<uint32_t>(mem_wb_current.aluResult, mem_wb_current.readData, mem_wb_current.memToReg);
 
         // QUESTION: Should I write to R8?
-        if (mem_wb_current.regWrite) {
+        if (mem_wb_current.regWrite && mem_wb_current.writeReg != 0 && debug) {
             cout << "Writing to register " << (int)mem_wb_current.writeReg << " value: 0x" << hex << writeData << dec << endl;
         }
         RegFile.write(mem_wb_current.writeReg, writeData, mem_wb_current.regWrite); // Write back data from WB stage into register file
@@ -372,9 +372,11 @@ int main() {
         
     } // end of while loop
 
-    std::cout << "\nTotal iterations: " << iterations << endl;
-    std::cout << "IMem size in bytes: " << IMem.get_size() << endl;
-    std::cout << "Expected iterations: " << IMem.get_size() / 4 << endl << endl;
+    if (debug) {
+        std::cout << "\nTotal iterations: " << iterations << endl;
+        std::cout << "IMem size in bytes: " << IMem.get_size() << endl;
+        std::cout << "Expected iterations: " << IMem.get_size() / 4 << endl << endl;
+    }
 
     RegFile.print_registers();
 
