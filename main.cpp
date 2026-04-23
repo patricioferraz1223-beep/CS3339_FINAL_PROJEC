@@ -291,7 +291,7 @@ int main() {
 
         // MUX 4 — does result come from ALU or memory?
         // FIXME: the control signal needs to be carried through the pipeline
-        writeData = Mux<uint32_t>(mem_wb_current.aluResult, mem_wb_current.readData, ctrl.memToReg);
+        writeData = mux<uint32_t>(mem_wb_current.aluResult, mem_wb_current.readData, mem_wb_current.memToReg);
 
         // Send DMem output and ALU output to Mux4 for selecting write back data
 
