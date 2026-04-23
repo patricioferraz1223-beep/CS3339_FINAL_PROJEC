@@ -238,6 +238,15 @@ int main() {
         // Sign extend
         uint32_t extended_immediate = sign_extender(immediate);
 
+        // Load values into state register
+        id_ex_next.readData1 = data1;
+        id_ex_next.readData2 = data2;
+        id_ex_next.signExtended = extended_immediate;
+        id_ex_next.rs = rs;
+        id_ex_next.rt = rt;
+        id_ex_next.rd = rd;
+        id_ex_next.ctrl = signals;
+
         // Stage 3: Execute     //////////////////////////////////////////////////////////////////////////
 
         // Send SE output to SL2
