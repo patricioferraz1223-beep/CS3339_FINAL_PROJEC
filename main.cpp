@@ -131,7 +131,7 @@ int main() {
     bool debug = false;
 
     assembler my_assembler(debug);      // Set to false to disable debug output from assembler
-    my_assembler.process_assembly_file("shift_test.asm");    // Encode Assembly file
+    my_assembler.process_assembly_file("MUL_test.asm");    // Encode Assembly file
     
     struct sr_IF_ID {
         uint32_t instruction = 0;

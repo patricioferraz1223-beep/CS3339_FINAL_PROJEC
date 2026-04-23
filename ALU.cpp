@@ -10,6 +10,7 @@ uint32_t execute_alu(uint32_t A, uint32_t B, uint8_t shamt, uint8_t control_code
         case 0b0001: result = A | B; break; // OR
         case 0b0010: result = A + B; break; // ADD
         case 0b0110: result = A - B; break; // SUB
+        case 0b1010: result = A * B; break; // MUL
         case 0b0111: result = (A < B) ? 1 : 0; break; // SLT
         case 0b1000: result = B << shamt; break; // SLL
         case 0b1001: result = B >> shamt; break; // SRL

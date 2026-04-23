@@ -18,5 +18,14 @@ uint8_t alu_control(uint8_t alu_op, uint8_t funct) {
             default:   return 0b0010; //Default to Add, since it's the most common operation
         }
     }
+
+    if (alu_op == 0b11) {
+        // MUL special opcode path (opcode 0x1C)
+        switch(funct) {
+            case 0x02: return 0b1010; // MUL
+            default:   return 0b0010; // Default ADD
+        }
+    }
+
     return 0b0010; 
 }

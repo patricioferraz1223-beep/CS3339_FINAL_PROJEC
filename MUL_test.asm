@@ -1,0 +1,12 @@
+ADDI $t0 $zero 10
+NOP
+NOP
+NOP
+ADDI $t1 $zero 3
+NOP
+NOP
+NOP
+MUL  $t4 $t0 $t1
+NOP
+NOP
+NOP
