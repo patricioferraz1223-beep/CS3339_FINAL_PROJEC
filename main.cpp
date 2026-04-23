@@ -18,6 +18,10 @@
 
 using namespace std;
 /*/////////////////////////////////////////////////////////////////////////////////////////
+RUNNING THE SIMULATOR:
+g++ -std=c++20 main.cpp assembler.cpp imem.cpp Program_Counter.cpp ALU.cpp ALU_Control.cpp Adder.cpp Register_File.cpp Shift_Left_2.cpp Sign_Extender.cpp DataMemory.cpp ControlUnit.cpp -o main && ./main
+
+
 While there are remaining instructions:
 - Program counter outputs the address of the current instruction
 - Instruction memory outputs the instruction at the address given by the program counter
@@ -250,8 +254,6 @@ int main() {
         uint32_t data1, 
                  data2;
         RegFile.read(rs, rt, data1, data2);
-        // QUESTION: Should I write to R8?
-        RegFile.write(rd, writeData, id_ex_current.ctrl.regWrite); // Write back data from WB stage into register file
          
         // Sign extend
         uint32_t extended_immediate = sign_extender(immediate);
@@ -320,6 +322,9 @@ int main() {
         // MUX 4 — does result come from ALU or memory?
         // FIXME: the control signal needs to be carried through the pipeline
         writeData = mux<uint32_t>(mem_wb_current.aluResult, mem_wb_current.readData, mem_wb_current.memToReg);
+
+        // QUESTION: Should I write to R8?
+        RegFile.write(mem_wb_current.writeReg, writeData, mem_wb_current.regWrite); // Write back data from WB stage into register file
 
         // Send DMem output and ALU output to Mux4 for selecting write back data
 
