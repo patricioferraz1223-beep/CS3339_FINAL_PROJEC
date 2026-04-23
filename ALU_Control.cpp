@@ -1,3 +1,5 @@
+#include <cstdint>
+
 uint8_t alu_control(uint8_t alu_op, uint8_t funct) {
     //00 = Store or Load, 0010 = Add, 0110 Subtract, 
     if (alu_op == 0b00) return 0b0010; //Load -> Add
