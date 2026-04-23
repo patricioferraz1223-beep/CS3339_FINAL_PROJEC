@@ -131,7 +131,8 @@ int main() {
     bool debug = false;
 
     assembler my_assembler(debug);      // Set to false to disable debug output from assembler
-    my_assembler.process_assembly_file("MUL_test.asm");    // Encode Assembly file
+    // my_assembler.process_assembly_file("MUL_test.asm");    // Encode Assembly file
+    my_assembler.process_assembly_file("BEQ_test.asm");    // Encode Assembly file
     
     struct sr_IF_ID {
         uint32_t instruction = 0;
@@ -325,7 +326,13 @@ int main() {
         
         // MUX 3 — does PC go to next line or branch?
         // int nextPC = mux<int>(ex_mem_current.pcPlus4, ex_mem_current.branchAddr, ex_mem_current.branch && ex_mem_current.zeroFlag);
-        uint32_t nextPC = mux<uint32_t>(pc_plus_4,ex_mem_current.branchAddr,ex_mem_current.branch && ex_mem_current.zeroFlag);
+        bool branchTaken = ex_mem_current.branch && ex_mem_current.zeroFlag;
+
+        uint32_t nextPC = mux<uint32_t>(
+            pc_plus_4,
+            ex_mem_current.branchAddr,
+            branchTaken
+        );
         
         // Send ALU output and write data address to DMem
         DMem.write(ex_mem_current.aluResult, ex_mem_current.writeData, ex_mem_current.memWrite);
@@ -355,6 +362,11 @@ int main() {
         // Send DMem output and ALU output to Mux4 for selecting write back data
 
         // End of loop
+
+        if (branchTaken) {
+            if_id_next = {};
+            id_ex_next = {};
+        }
 
         // Load values into state registers for the next stage
         if_id_current = if_id_next;
