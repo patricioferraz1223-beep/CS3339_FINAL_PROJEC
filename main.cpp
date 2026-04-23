@@ -139,6 +139,7 @@ int main() {
         uint32_t aluResult = 0;
         uint32_t writeData = 0;
         uint8_t writeReg = 0;
+        uint32_t branchAddr = 0;
         bool zeroFlag = false;
 
         bool memRead = false;
@@ -245,7 +246,7 @@ int main() {
 
         // ADDER: Send SL2 output and PC+4 to Adder for branch address calculation
         // FIXME: I think this should be saved in a state register
-        uint32_t branchAddr = adder(if_id_current.pcPlus4, sl2_out);
+        ex_mem_next.branchAddr = adder(if_id_current.pcPlus4, sl2_out);
 
         // MUX (ALU Input): Send SE output and Read Data 2 to Mux2
         uint32_t aluInput2 = mux<uint32_t>(id_ex_current.signExtended, id_ex_current.readData2, ctrl.aluSrc);
@@ -255,7 +256,7 @@ int main() {
         
         // ALU: Send Mux2 output, Read Data 1, and ALU control to ALU for execution
         mem_wb_next.aluResult = execute_alu(id_ex_current.readData1, aluInput2, aluControlCode);
-        
+
         // Load Write Data (Read Data 2) into state register for memory access stage
         mem_wb_next.writeData = id_ex_current.readData2;
 
