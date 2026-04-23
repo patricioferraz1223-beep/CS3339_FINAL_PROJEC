@@ -15,6 +15,9 @@ NOP
 J    end_label
 equal_label:
 ADDI $s2 $zero 1
+start:
+ADDI $t0 $zero 1
+BEQ  $t0 $t0 start
 NOP
 end_label:
 NOP
