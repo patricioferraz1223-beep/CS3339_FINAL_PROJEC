@@ -290,7 +290,7 @@ int main() {
         // Stage 4: Memory Access   //////////////////////////////////////////////////////////////////////////
         
         // MUX 3 — does PC go to next line or branch?
-        int nextPC = mux<int>(pc4, branchAddr, takeBranch);
+        int nextPC = mux<int>(ex_mem_current.pcPlus4, ex_mem_current.branchAddr, ex_mem_current.branch && ex_mem_current.zeroFlag);
 
         // Send ALU output and write data address to DMem
 
