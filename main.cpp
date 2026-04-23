@@ -125,27 +125,6 @@ uint32_t program_counter(uint32_t address) {
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
 // FIXME: Not implemented    
-
-    Instruction Memory:
-    - INPUT: 32-bit instruction address (from PC)
-    - OUTPUT: 32-bit instruction
-//////////////////////////////////////////////////////////////////////////////////////////*/
-class InstructionMemory {
-    private:
-        unordered_map<uint32_t, uint32_t> memory; // Address to instruction mapping
-
-    public:
-        uint32_t read_address(uint32_t address) {
-            // For this project, we will return a dummy instruction based on the address.
-            // In a real implementation, this would access memory to fetch the instruction.
-            return 0xFFFFFFFF; // Example dummy instruction
-        }
-        void load_instructions(uint32_t address, uint32_t instruction) {
-        }
-};
-
-/*/////////////////////////////////////////////////////////////////////////////////////////
-// FIXME: Not implemented    
 // NOTE: This could be a general mux type that uses templating so we can apply it in 
 //  different contexts.
 
