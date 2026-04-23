@@ -121,6 +121,11 @@ int main() {
     // Declare state registers for each stage of the pipeline
     // FIXME: I need to change these types, theyre not all accurate
     // QUESTION: Do we need to store PC output in a state register? 
+
+    assembler my_assembler(false);      // Set to false to disable debug output from assembler
+    my_assembler.process_assembly_file("assembly_file.asm");    // Encode Assembly file
+
+    InstructionMemory IMem("program.bin");   // Load instruction memory with encoded instructions from assembly file
     
     struct sr_IF_ID {
         uint32_t instruction = 0;
