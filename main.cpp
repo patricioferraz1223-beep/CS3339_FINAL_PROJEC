@@ -293,6 +293,9 @@ int main() {
         int nextPC = mux<int>(ex_mem_current.pcPlus4, ex_mem_current.branchAddr, ex_mem_current.branch && ex_mem_current.zeroFlag);
 
         // Send ALU output and write data address to DMem
+        DMem.write(ex_mem_current.aluResult, ex_mem_current.writeData, ex_mem_current.memWrite);
+
+        uint32_t mem_read_data = DMem.read(ex_mem_current.aluResult, ex_mem_current.memWrite);
 
         // Stage 5: Write Back      //////////////////////////////////////////////////////////////////////////
 
