@@ -135,6 +135,7 @@ int main() {
         uint8_t rt = 0;
         uint8_t rd = 0;
         ControlSignals ctrl = {0};
+        uint8_t writeReg = 0;
     };
 
     struct sr_EX_MEM {
@@ -247,6 +248,7 @@ int main() {
         id_ex_next.rt = rt;
         id_ex_next.rd = rd;
         id_ex_next.ctrl = signals;
+        id_ex_next.writeReg = writeReg;
 
         // Stage 3: Execute     //////////////////////////////////////////////////////////////////////////
 
