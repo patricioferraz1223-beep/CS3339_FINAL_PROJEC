@@ -1,7 +1,8 @@
 #include <fstream>
 #include <vector>
 #include <cstdint>
-
+#include <string>
+#include <stdexcept>
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
 // FIXME: Not implemented    
@@ -14,24 +15,28 @@ class InstructionMemory {
     private:
         std::vector<uint8_t> imem_data; // Vector to hold the instruction memory data
 
-    std::vector<uint8_t> load_binary(const std::string& filename) {
-        std::ifstream file(filename, std::ios::binary);
+        std::vector<uint8_t> load_binary(const std::string& filename) {
+            std::ifstream file(filename, std::ios::binary);
 
-        // Move to end to get file size
-        file.seekg(0, std::ios::end);
-        std::streamsize size = file.tellg();
-        file.seekg(0, std::ios::beg);
+            if (!file) {
+                throw std::runtime_error("Failed to open file");
+            }
+            
+            // Move to end to get file size
+            file.seekg(0, std::ios::end);
+            std::streamsize size = file.tellg();
+            file.seekg(0, std::ios::beg);
 
-        // Allocate buffer
-        std::vector<uint8_t> buffer(size);
+            // Allocate buffer
+            std::vector<uint8_t> buffer(size);
 
-        // Read entire file
-        if (file.read(reinterpret_cast<char*>(buffer.data()), size)) {
-            return buffer;
+            // Read entire file
+            if (file.read(reinterpret_cast<char*>(buffer.data()), size)) {
+                return buffer;
+            }
+
+            throw std::runtime_error("Failed to read file");
         }
-
-        throw std::runtime_error("Failed to read file");
-    }
 
     public:
         InstructionMemory() {}
@@ -41,11 +46,19 @@ class InstructionMemory {
         }
 
         uint32_t read_address(uint32_t address) {
+            if (address + 3 >= imem_data.size()) {
+                throw std::out_of_range("InstructionMemory: address out of bounds");
+            }
+
+            if (address % 4 != 0) {
+                throw std::runtime_error("Unaligned instruction access");
+            }
+
             uint32_t instr =
-                    (imem_data[address] << 24) |
-                    (imem_data[address + 1] << 16) |
-                    (imem_data[address + 2] << 8) |
-                    (imem_data[address + 3]);
+                (static_cast<uint32_t>(imem_data[address]) << 24) |
+                (static_cast<uint32_t>(imem_data[address + 1]) << 16) |
+                (static_cast<uint32_t>(imem_data[address + 2]) << 8)  |
+                (static_cast<uint32_t>(imem_data[address + 3]));
             return instr;
         }
         void load_instructions(const std::string& filename) {
