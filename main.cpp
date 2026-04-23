@@ -321,6 +321,8 @@ int main() {
 
         // Keep zero register hardwired to 0
         RegFile.write(0, 0, true);
+
+        i++;
         
     } // end of while loop
 
