@@ -12,6 +12,8 @@
 #include "MUX.h"
 #include "DataMemory.cpp"
 #include "ControlUnit.cpp"
+#include "imem.cpp"
+#include "imem.h"
 
 using namespace std;
 /*/////////////////////////////////////////////////////////////////////////////////////////
