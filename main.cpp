@@ -258,7 +258,7 @@ int main() {
         RegFile.read_instructions(read_addr_1); // FIXME: Need to fill in the other parameters
 
         // Sign extend
-        // QUESTION: Is this for the immediate?
+        uint32_t extended_immediate = sign_extender(immediate);
 
         // Stage 3: Execute     //////////////////////////////////////////////////////////////////////////
 
