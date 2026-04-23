@@ -75,11 +75,11 @@ void assembler::process_assembly_file(std::string filename) {
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // READ ASSEMBLY FILE LINE BY LINE, ASSEMBLE INSTRUCTIONS, AND WRITE TO OUTPUT FILE
-    // FIXME: I need a first pass for my labels and a second pass for my instructions
 
     // First pass: increment instruction count, loading labels into the address table
     while (std::getline(input, instruction_line)) {
-        if (assembler::debug) cout << "First pass: reading instruction " << assembler::instruction_count << endl;
+        if (assembler::debug) cout  << "First pass: reading instruction " << assembler::instruction_count 
+                                    << ": " << instruction_line << endl;
 
         // Track Instruction index for Branch and Jump Instructions
         
@@ -89,8 +89,8 @@ void assembler::process_assembly_file(std::string filename) {
 
         // Check line if label, else instruction
         if (line_length > 0 && instruction_line[line_length - 1] == ':') { // Check if the line ends with a colon, indicating it's a label
-            // FIXME: I think i need to store all but the last char of the label, otherwise the label will include the colon and not match the label used in the instruction
-            label_addresses[label] = instruction_count * 4; // Store the instruction index for the label
+            if (!label.empty()) label.pop_back(); // Remove the colon from the label name
+            label_addresses[label] = assembler::instruction_count * 4; // Store the instruction index for the label
         }
         else instruction_count++; // Increment instruction count for each instruction (not labels)
         
@@ -101,7 +101,7 @@ void assembler::process_assembly_file(std::string filename) {
 
     int i = 0;
     while (std::getline(input, instruction_line)) {
-        if (assembler::debug) cout << "Second pass: reading instruction " << i << endl;
+        if (assembler::debug) cout << "Second pass: reading instruction " << i << ": " << instruction_line << endl;
 
         // Track Instruction index for Branch and Jump Instructions
         
@@ -118,7 +118,7 @@ void assembler::process_assembly_file(std::string filename) {
         }
         else {
             // Assemble the instruction into binary
-            uint32_t instruction_binary = assembler::assemble_instruction(instruction_line);
+            uint32_t instruction_binary = assembler::assemble_instruction(instruction_line,i);
 
             if (assembler::debug) cout << "Are we even trying to write to output?" << endl;
 
@@ -132,12 +132,14 @@ void assembler::process_assembly_file(std::string filename) {
             if (assembler::debug) cout << endl << "Instruction: " << instruction_line << " -> 0x" << hex << instruction_binary << dec << endl;
             
             output.write(reinterpret_cast<char*>(bytes), 4);
+
+            i++;
         }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // CLOSE FILE STREAMS
 
-    i++;
+    
 
     }
 
@@ -159,12 +161,16 @@ void assembler::process_assembly_file(std::string filename) {
 int assembler::parse_register(std::string szRegister) {
     std::string reg = szRegister.substr(1);
 
+    // FIXME: I need to deal with "s" family of registers
     if (reg == "sp") return 29;
     else if (reg == "ra") return 31;
     else if (reg == "zero") return 0;
     else if (reg == "t8") return 24;
     else if (reg == "t9") return 25;
-    else return (std::stoi(reg.substr(1)) + 8); // Convert the register number to an integer, ignoring the '$' character
+    else {
+        if (reg[0] == 's') return (std::stoi(reg.substr(1)) + 16); // Convert the register number to an integer, ignoring the 's' character
+        else return (std::stoi(reg.substr(1)) + 8); // Convert the register number to an integer, ignoring the '$' character
+    }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -172,7 +178,7 @@ int assembler::parse_register(std::string szRegister) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 // FIXME: I still need to deal with special registers
-uint32_t assembler::assemble_instruction (std::string instruction_line) {
+uint32_t assembler::assemble_instruction (std::string instruction_line, int instruction_index) {
 
     std::string op, r1, r2, r3;
     std::istringstream iss(instruction_line);
@@ -208,7 +214,15 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         if (assembler::debug) cout << "Assembling ADDI instruction: " << instruction_line << endl;
 
         // rt = rs + imm
-        instruction_binary |= 0x08;   // opcode
+        uint32_t opcode = 0x08;   // opcode
+        rt = assembler::parse_register(r1);
+        rs = assembler::parse_register(r2);
+        int16_t immediate = std::stoi(r3);
+
+        instruction_binary |= (opcode << 26);
+        instruction_binary |= (rs     << 21);
+        instruction_binary |= (rt     << 16);
+        instruction_binary |= (immediate & 0xFFFF);
     }
     else if (op == "SUB") { // SUB rd, rs, rt
         if (assembler::debug) cout << "Assembling SUB instruction: " << instruction_line << endl;
@@ -288,7 +302,6 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         instruction_binary |= (shamt  << 6);
         instruction_binary |= (funct);
     }
-    // FIXME: I need to set shift amount
     else if (op == "SLL") { // SLL rd, rt, shamt
         if (assembler::debug) cout << "Assembling SLL instruction: " << instruction_line << endl;
 
@@ -308,7 +321,6 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         instruction_binary |= (shamt  << 6);
         instruction_binary |= (funct);
     }
-    // FIXME: I need to set shift amount
     else if (op == "SRL") { // SRL rd, rt, shamt
         if (assembler::debug) cout << "Assembling SRL instruction: " << instruction_line << endl;
 
@@ -328,20 +340,44 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
         instruction_binary |= (shamt  << 6);
         instruction_binary |= (funct);
     }
-    // TODO: Implement this 
     else if (op == "LW") { // LW rt, offset(base)
         if (assembler::debug) cout << "Assembling LW instruction: " << instruction_line << endl;
 
-        // rt = Memory[base + offset]
-        instruction_binary |= 0x23;   // opcode
-    }
-    // TODO: Implement this
+        uint32_t opcode = 0x23;
+
+        rt = assembler::parse_register(r1);
+
+        size_t lparen = r2.find('(');
+        size_t rparen = r2.find(')');
+
+        int16_t immediate = std::stoi(r2.substr(0, lparen));
+        std::string base_reg = r2.substr(lparen + 1, rparen - lparen - 1);
+        rs = assembler::parse_register(base_reg);
+
+        instruction_binary |= (opcode << 26);
+        instruction_binary |= (rs << 21);
+        instruction_binary |= (rt << 16);
+        instruction_binary |= (immediate & 0xFFFF);
+    }    
     else if (op == "SW") { // SW rt, offset(base)
         if (assembler::debug) cout << "Assembling SW instruction: " << instruction_line << endl;
 
-        // Memory[base + offset] = rt
-        instruction_binary |= 0x2B;   // opcode
-    }
+        uint32_t opcode = 0x2B;
+
+        rt = assembler::parse_register(r1);
+
+        size_t lparen = r2.find('(');
+        size_t rparen = r2.find(')');
+
+        int16_t immediate = std::stoi(r2.substr(0, lparen));
+        std::string base_reg = r2.substr(lparen + 1, rparen - lparen - 1);
+        rs = assembler::parse_register(base_reg);
+
+        instruction_binary |= (opcode << 26);
+        instruction_binary |= (rs << 21);
+        instruction_binary |= (rt << 16);
+        instruction_binary |= (immediate & 0xFFFF);
+    }       
     else if (op == "BEQ") { // BEQ rs, rt, offset/label/immediate
         if (assembler::debug) cout << "Assembling BEQ instruction: " << instruction_line << endl;
 
@@ -362,7 +398,7 @@ uint32_t assembler::assemble_instruction (std::string instruction_line) {
             do not default to zero
             */
         }
-        int32_t current_address = instruction_count * 4; // Current instruction address in bytes
+        int32_t current_address = instruction_index * 4; // Current instruction address in bytes
         int32_t offset = (label_address - (current_address + 4)) / 4;
         offset &= 0xFFFF; // Ensure offset is 16 bits
 
