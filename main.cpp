@@ -131,8 +131,10 @@ int main() {
     bool debug = false;
 
     assembler my_assembler(debug);      // Set to false to disable debug output from assembler
+
     // my_assembler.process_assembly_file("MUL_test.asm");    // Encode Assembly file
-    my_assembler.process_assembly_file("BEQ_test.asm");    // Encode Assembly file
+    // my_assembler.process_assembly_file("BEQ_test.asm");    // Encode Assembly file
+    my_assembler.process_assembly_file("J_test.asm");    // Encode Assembly file
     
     struct sr_IF_ID {
         uint32_t instruction = 0;
@@ -265,6 +267,9 @@ int main() {
         // MUX 1 — which register gets the result?
         ControlSignals signals = controlUnit(opcode);
         uint8_t writeReg = mux<int>(rt, rd, signals.regDst);
+
+        bool jumpTaken = signals.jump;
+        uint32_t jumpTarget = (if_id_current.pcPlus4 & 0xF0000000) | (address << 2);
         
         // Load instruction into the Register file and output the read addresses
         // sr_instruction -> Register_file;
@@ -328,11 +333,21 @@ int main() {
         // int nextPC = mux<int>(ex_mem_current.pcPlus4, ex_mem_current.branchAddr, ex_mem_current.branch && ex_mem_current.zeroFlag);
         bool branchTaken = ex_mem_current.branch && ex_mem_current.zeroFlag;
 
-        uint32_t nextPC = mux<uint32_t>(
-            pc_plus_4,
-            ex_mem_current.branchAddr,
-            branchTaken
-        );
+        // uint32_t nextPC = mux<uint32_t>(
+        //     pc_plus_4,
+        //     ex_mem_current.branchAddr,
+        //     branchTaken
+        // );
+
+        uint32_t nextPC = pc_plus_4;
+
+        if (branchTaken) {
+            nextPC = ex_mem_current.branchAddr;
+        }
+
+        if (jumpTaken) {
+            nextPC = jumpTarget;
+        }
         
         // Send ALU output and write data address to DMem
         DMem.write(ex_mem_current.aluResult, ex_mem_current.writeData, ex_mem_current.memWrite);
@@ -366,6 +381,9 @@ int main() {
         if (branchTaken) {
             if_id_next = {};
             id_ex_next = {};
+        }
+        if (jumpTaken) {
+            if_id_next = {};
         }
 
         // Load values into state registers for the next stage
