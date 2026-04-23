@@ -144,6 +144,8 @@ int main() {
         uint8_t rs = 0;
         uint8_t rt = 0;
         uint8_t rd = 0;
+        uint8_t funct = 0;
+        uint8_t shamt = 0;
         ControlSignals ctrl = {0};
         uint8_t writeReg = 0;
         uint32_t pcPlus4 = 0;
@@ -209,8 +211,10 @@ int main() {
     uint32_t writeData = 0;
 
     int i = 0; // iterator
+    int iterations = 0;
 
-    while (i < IMem.get_size()){   // FIXME: set condition (while instructions remain)
+    while (i < (int)(IMem.get_size() / 4)){   // Divide by 4 since get_size() is in bytes
+        iterations++;
 
         // FIXME: I haven't included the mux that selects between the branch address and 
         //  the next sequential address for the PC input
@@ -265,6 +269,8 @@ int main() {
         id_ex_next.rs = rs;
         id_ex_next.rt = rt;
         id_ex_next.rd = rd;
+        id_ex_next.funct = funct;
+        id_ex_next.shamt = shamt;
         id_ex_next.ctrl = signals;
         id_ex_next.writeReg = writeReg;
 
@@ -283,7 +289,7 @@ int main() {
         uint32_t aluInput2 = mux<uint32_t>(id_ex_current.signExtended, id_ex_current.readData2, id_ex_current.ctrl.aluSrc);
 
         // ALU Control: Send ALU control bits to ALU control to get ALU operation code
-        uint8_t aluControlCode = alu_control(id_ex_current.ctrl.aluOp, funct); // For R-type, funct field determines AL
+        uint8_t aluControlCode = alu_control(id_ex_current.ctrl.aluOp, id_ex_current.funct); // For R-type, funct field determines operation
         
         // ALU: Send Mux2 output, Read Data 1, and ALU control to ALU for execution
         ex_mem_next.aluResult = execute_alu(id_ex_current.readData1, aluInput2, aluControlCode, ex_mem_next.zeroFlag);
@@ -325,6 +331,9 @@ int main() {
         writeData = mux<uint32_t>(mem_wb_current.aluResult, mem_wb_current.readData, mem_wb_current.memToReg);
 
         // QUESTION: Should I write to R8?
+        if (mem_wb_current.regWrite) {
+            cout << "Writing to register " << (int)mem_wb_current.writeReg << " value: 0x" << hex << writeData << dec << endl;
+        }
         RegFile.write(mem_wb_current.writeReg, writeData, mem_wb_current.regWrite); // Write back data from WB stage into register file
 
         // Send DMem output and ALU output to Mux4 for selecting write back data
@@ -338,7 +347,7 @@ int main() {
         mem_wb_current = mem_wb_next;
 
         //Increment program counter
-        // PC.update(nextPC);
+        PC.update(nextPC);
 
         // Keep zero register hardwired to 0
         RegFile.write(0, 0, true);
@@ -346,6 +355,10 @@ int main() {
         i++;
         
     } // end of while loop
+
+    cout << "\nTotal iterations: " << iterations << endl;
+    cout << "IMem size in bytes: " << IMem.get_size() << endl;
+    cout << "Expected iterations: " << IMem.get_size() / 4 << endl << endl;
 
     RegFile.print_registers();
 
