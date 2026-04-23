@@ -295,7 +295,7 @@ int main() {
         // Send ALU output and write data address to DMem
         DMem.write(ex_mem_current.aluResult, ex_mem_current.writeData, ex_mem_current.memWrite);
 
-        uint32_t mem_read_data = DMem.read(ex_mem_current.aluResult, ex_mem_current.memWrite);
+        uint32_t mem_read_data = DMem.read(ex_mem_current.aluResult, ex_mem_current.memRead);
 
         // Load up state registers
         mem_wb_next.readData = mem_read_data;
