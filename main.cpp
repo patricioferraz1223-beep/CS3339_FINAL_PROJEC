@@ -216,7 +216,7 @@ int main() {
         //  the next sequential address for the PC input
         // Pretty sure the above issue is solved with the nextPC mux.
 
-        // Stage 1: Fetch Stage
+        // Stage 1: Fetch Stage     //////////////////////////////////////////////////////////////////////////
 
         // Take PC output and feed it into IMem to get instruction
         uint32_t fetched_instruction_address = PC.get_address();
@@ -231,9 +231,19 @@ int main() {
         if_id_next.instruction = fetched_instruction;
         if_id_next.pcPlus4 = pc_plus_4;
 
-        // Stage 2: Instruction Decode Stage
+        // Stage 2: Instruction Decode Stage    //////////////////////////////////////////////////////////////
         // Take values from state register
         uint32_t instruction_to_decode = if_id_current.instruction;
+
+        // Shift and mask bits to extract fields from instruction
+        uint8_t opcode; // used for R, I, J instructions
+        uint8_t rs;     // used for R, I instructions
+        uint8_t rt;     // used for R, I instructions
+        uint8_t rd;     // used for R instructions
+        uint8_t shamt;  // shift amount. Used for R instructions
+        uint8_t funct;  // used for R instructions
+        uint16_t immediate;  // used for I instructions
+        uint32_t address;    // used for J instructions
 
         // MUX 1 — which register gets the result?
         int writeReg = mux<int>(rt, rd, ctrl.regDst);
@@ -249,7 +259,7 @@ int main() {
         // Sign extend
         // QUESTION: Is this for the immediate?
 
-        // Stage 3: Execute
+        // Stage 3: Execute     //////////////////////////////////////////////////////////////////////////
 
         // Send SE output to SL2
         // Send SE output and Read Data 2 to Mux2
@@ -259,14 +269,14 @@ int main() {
         // MUX 2 — does ALU use register or immediate?
         int aluInput2 = mux<int>(readData2, signExtended, ctrl.aluSrc);
 
-        // Stage 4: Memory Access
+        // Stage 4: Memory Access   //////////////////////////////////////////////////////////////////////////
         
         // MUX 3 — does PC go to next line or branch?
         int nextPC = mux<int>(pc4, branchAddr, takeBranch);
 
         // Send ALU output and write data address to DMem
 
-        // Stage 5: Write Back
+        // Stage 5: Write Back      //////////////////////////////////////////////////////////////////////////
 
         // MUX 4 — does result come from ALU or memory?
         int writeData = mux<int>(aluResult, memReadData, ctrl.memToReg);
