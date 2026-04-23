@@ -136,6 +136,7 @@ int main() {
         uint8_t rd = 0;
         ControlSignals ctrl = {0};
         uint8_t writeReg = 0;
+        uint32_t pcPlus4 = 0;
     };
 
     struct sr_EX_MEM {
@@ -150,6 +151,8 @@ int main() {
         bool branch = false;
         bool memToReg = false;
         bool regWrite = false;
+
+        uint32_t pcPlus4 = 0;
     };
 
     struct sr_MEM_WB {
@@ -253,6 +256,8 @@ int main() {
         id_ex_next.ctrl = signals;
         id_ex_next.writeReg = writeReg;
 
+        id_ex_next.pcPlus4 = if_id_current.pcPlus4;
+
         // Stage 3: Execute     //////////////////////////////////////////////////////////////////////////
 
         // SL2: Send SE output to SL2
@@ -280,6 +285,8 @@ int main() {
         ex_mem_next.branch = id_ex_current.ctrl.branch;
         ex_mem_next.memToReg = id_ex_current.ctrl.memToReg;
         ex_mem_next.regWrite = id_ex_current.ctrl.regWrite;
+
+        ex_mem_next.pcPlus4 = id_ex_current.pcPlus4;
         // Stage 4: Memory Access   //////////////////////////////////////////////////////////////////////////
         
         // MUX 3 — does PC go to next line or branch?
