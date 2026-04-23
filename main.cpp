@@ -191,6 +191,9 @@ int main() {
     sr_MEM_WB   mem_wb_current,
                 mem_wb_next;
 
+    // Instantiate MemtoReg Mux output here since its output is needed in the ID stage for writing to the register file
+    uint32_t writeData = 0;
+
     while (true){   // FIXME: set condition (while instructions remain)
 
         // FIXME: I haven't included the mux that selects between the branch address and 
@@ -279,7 +282,8 @@ int main() {
         // Stage 5: Write Back      //////////////////////////////////////////////////////////////////////////
 
         // MUX 4 — does result come from ALU or memory?
-        int writeData = mux<int>(aluResult, memReadData, ctrl.memToReg);
+        // FIXME: the control signal needs to be carried through the pipeline
+        writeData = Mux<uint32_t>(mem_wb_current.aluResult, mem_wb_current.readData, ctrl.memToReg);
 
         // Send DMem output and ALU output to Mux4 for selecting write back data
 
