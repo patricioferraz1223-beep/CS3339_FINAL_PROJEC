@@ -232,11 +232,9 @@ int main() {
         
         // Load instruction into the Register file and output the read addresses
         // sr_instruction -> Register_file;
-        
-
-        // void read_instructions(uint8_t read_data_1, uint8_t read_data_2, uint8_t write_addr, uint32_t write_data, bool control_signal);
-        uint8_t read_addr_1 = (sr_imem_out >> 21) & 0x1F;   // bits 21-25
-        RegFile.read_instructions(read_addr_1); // FIXME: Need to fill in the other parameters
+        uint32_t data1, 
+                 data2;
+        RegFile.read(rs, rt, data1, data2);
 
         // Sign extend
         uint32_t extended_immediate = sign_extender(immediate);
