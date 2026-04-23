@@ -212,9 +212,15 @@ int main() {
 
     int i = 0; // iterator
     int iterations = 0;
+    int total_cycles = (IMem.get_size() / 4) + 4;
 
-    while (i < (int)(IMem.get_size() / 4)){   // Divide by 4 since get_size() is in bytes
+    while (i < total_cycles) {
         iterations++;
+
+        if_id_next = {};
+        id_ex_next = {};
+        ex_mem_next = {};
+        mem_wb_next = {};
 
         // FIXME: I haven't included the mux that selects between the branch address and 
         //  the next sequential address for the PC input
@@ -226,10 +232,15 @@ int main() {
         uint32_t fetched_instruction_address = PC.get_address();
 
         // Read address from IMemand 
-        uint32_t fetched_instruction = IMem.read_address(fetched_instruction_address); // Fetch instruction from memory
+        // uint32_t fetched_instruction = IMem.read_address(fetched_instruction_address); // Fetch instruction from memory
+        uint32_t fetched_instruction = 0; // NOP
 
         // Calculate pcPlus4 value for PC incrementation
         uint32_t pc_plus_4 = adder(fetched_instruction_address, 4);
+
+        if (fetched_instruction_address + 3 < (uint32_t)IMem.get_size()) {
+            fetched_instruction = IMem.read_address(fetched_instruction_address);
+        }
 
         // Load values into state register
         if_id_next.instruction = fetched_instruction;
@@ -283,7 +294,7 @@ int main() {
 
         // ADDER: Send SL2 output and PC+4 to Adder for branch address calculation
         // FIXME: I think this should be saved in a state register
-        ex_mem_next.branchAddr = adder(if_id_current.pcPlus4, sl2_out);
+        ex_mem_next.branchAddr = adder(id_ex_current.pcPlus4, sl2_out);
 
         // MUX (ALU Input): Send SE output and Read Data 2 to Mux2
         uint32_t aluInput2 = mux<uint32_t>(id_ex_current.readData2, id_ex_current.signExtended, id_ex_current.ctrl.aluSrc);
@@ -313,8 +324,9 @@ int main() {
         // Stage 4: Memory Access   //////////////////////////////////////////////////////////////////////////
         
         // MUX 3 — does PC go to next line or branch?
-        int nextPC = mux<int>(ex_mem_current.pcPlus4, ex_mem_current.branchAddr, ex_mem_current.branch && ex_mem_current.zeroFlag);
-
+        // int nextPC = mux<int>(ex_mem_current.pcPlus4, ex_mem_current.branchAddr, ex_mem_current.branch && ex_mem_current.zeroFlag);
+        uint32_t nextPC = mux<uint32_t>(pc_plus_4,ex_mem_current.branchAddr,ex_mem_current.branch && ex_mem_current.zeroFlag);
+        
         // Send ALU output and write data address to DMem
         DMem.write(ex_mem_current.aluResult, ex_mem_current.writeData, ex_mem_current.memWrite);
 
@@ -360,9 +372,9 @@ int main() {
         
     } // end of while loop
 
-    cout << "\nTotal iterations: " << iterations << endl;
-    cout << "IMem size in bytes: " << IMem.get_size() << endl;
-    cout << "Expected iterations: " << IMem.get_size() / 4 << endl << endl;
+    std::cout << "\nTotal iterations: " << iterations << endl;
+    std::cout << "IMem size in bytes: " << IMem.get_size() << endl;
+    std::cout << "Expected iterations: " << IMem.get_size() / 4 << endl << endl;
 
     RegFile.print_registers();
 
