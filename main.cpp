@@ -128,14 +128,18 @@ int main() {
     // Declare state registers for each stage of the pipeline
     // FIXME: I need to change these types, theyre not all accurate
     // QUESTION: Do we need to store PC output in a state register? 
-    bool debug = false;
+    bool debug = true;
 
     assembler my_assembler(debug);      // Set to false to disable debug output from assembler
 
     // my_assembler.process_assembly_file("MUL_test.asm");    // Encode Assembly file
     // my_assembler.process_assembly_file("BEQ_test.asm");    // Encode Assembly file
-    my_assembler.process_assembly_file("J_test.asm");    // Encode Assembly file
-    
+    // my_assembler.process_assembly_file("J_test.asm");    // Encode Assembly file
+
+    // my_assembler.process_assembly_file("demo_fill_every_other_register.asm");    // Encode Assembly file
+    my_assembler.process_assembly_file("demo_loop_sum_1_to_5.asm");    // Encode Assembly file
+    // my_assembler.process_assembly_file("demo_alu_memory_branch_showcase.asm");    // Encode Assembly file
+
     struct sr_IF_ID {
         uint32_t instruction = 0;
         uint32_t pcPlus4 = 0;
@@ -216,7 +220,7 @@ int main() {
 
     int i = 0; // iterator
     int iterations = 0;
-    int total_cycles = (IMem.get_size() / 4) + 4;
+    int total_cycles = (IMem.get_size() / 4) + 50;
 
     while (i < total_cycles) {
         iterations++;
