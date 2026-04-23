@@ -116,6 +116,8 @@ QUESTIONS:
 
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
+COMMAND TO COMPILE AND RUN:
+    g++ -std=c++20 main.cpp assembler.cpp imem.cpp Program_Counter.cpp ALU.cpp ALU_Control.cpp Adder.cpp Register_File.cpp Shift_Left_2.cpp Sign_Extender.cpp DataMemory.cpp ControlUnit.cpp -o main && ./main
 //////////////////////////////////////////////////////////////////////////////////////////*/
 
 int main() {
