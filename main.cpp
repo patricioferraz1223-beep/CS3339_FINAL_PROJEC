@@ -286,10 +286,11 @@ int main() {
         uint8_t aluControlCode = alu_control(id_ex_current.ctrl.aluOp, funct); // For R-type, funct field determines AL
         
         // ALU: Send Mux2 output, Read Data 1, and ALU control to ALU for execution
-        mem_wb_next.aluResult = execute_alu(id_ex_current.readData1, aluInput2, aluControlCode, ex_mem_next.zeroFlag);
+        ex_mem_next.aluResult = execute_alu(id_ex_current.readData1, aluInput2, aluControlCode, ex_mem_next.zeroFlag);
 
         // Load Write Data (Read Data 2) into state register for memory access stage
         ex_mem_next.writeData = id_ex_current.readData2;
+        ex_mem_next.writeReg = id_ex_current.writeReg;
 
         // Update control signals in EX/MEM state register for use in MEM and WB stages
         ex_mem_next.memRead = id_ex_current.ctrl.memRead;
