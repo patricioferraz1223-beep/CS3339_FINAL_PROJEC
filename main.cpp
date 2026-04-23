@@ -236,14 +236,14 @@ int main() {
         uint32_t instruction_to_decode = if_id_current.instruction;
 
         // Shift and mask bits to extract fields from instruction
-        uint8_t opcode; // used for R, I, J instructions
-        uint8_t rs;     // used for R, I instructions
-        uint8_t rt;     // used for R, I instructions
-        uint8_t rd;     // used for R instructions
-        uint8_t shamt;  // shift amount. Used for R instructions
-        uint8_t funct;  // used for R instructions
-        uint16_t immediate;  // used for I instructions
-        uint32_t address;    // used for J instructions
+        uint8_t opcode = (instruction_to_decode >> 26) & 0x3F; // 31-26. used for R, I, J instructions
+        uint8_t rs = (instruction_to_decode >> 21) & 0x1F;     // 25-21. used for R, I instructions
+        uint8_t rt = (instruction_to_decode >> 16) & 0x1F;     // 20-16. used for R, I instructions
+        uint8_t rd = (instruction_to_decode >> 11) & 0x1F;     // 15-11. used for R instructions
+        uint8_t shamt = (instruction_to_decode >> 6) & 0x1F;  // 10-6. shift amount. Used for R instructions
+        uint8_t funct = instruction_to_decode & 0x3F;  // 5-0. used for R instructions
+        uint16_t immediate = instruction_to_decode & 0xFFFF;  // 15-0. used for I instructions
+        uint32_t address = instruction_to_decode & 0x03FFFFFF;    // 25-0. used for J instructions
 
         // MUX 1 — which register gets the result?
         int writeReg = mux<int>(rt, rd, ctrl.regDst);
