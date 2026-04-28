@@ -19,4 +19,17 @@ void DataMemory::write(int address, int value, bool memWrite)
     if (memWrite) {
         memory[address] = value;
     }
-}
+
+    // Print memory contents 
+    void printMemory() {
+        cout << "=== Data Memory ===" << endl;
+        if (memory.empty()) {
+            cout << "Memory is empty" << endl;
+            return;
+        }
+        for (auto& pair : memory) {
+            cout << "Address: " << pair.first
+                 << " | Value: " << pair.second << endl;
+        }
+    }
+};
