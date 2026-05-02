@@ -1,2 +1,14 @@
-Gotta add the funny stuff about team members, small description and how to run the code.
+Computer Architecture (CS3339) Final Project: MIPS Simulator
+
+An instruction-by-instruction simulator for a pipelined MIPS processor. 
+The simulator executes instructions from the input assembly file one by one and displays the contents of the 
+register file and memory after the program has finished execution.
+
+Team Members: Moji Adediran, Sam Drell, Patricio Santana, and Tim Sparks
+
+How to Build: 
+
+How to Run: 
+
+
 
