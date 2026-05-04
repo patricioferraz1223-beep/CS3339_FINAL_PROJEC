@@ -413,6 +413,7 @@ int main() {
     }
 
     RegFile.print_registers();
+    DMem.printMemory();
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
     While instructions remain
