@@ -128,7 +128,15 @@ int main() {
     // Declare state registers for each stage of the pipeline
     // FIXME: I need to change these types, theyre not all accurate
     // QUESTION: Do we need to store PC output in a state register? 
-    bool debug = false;
+
+    bool debug = true; // Debug Mode
+    bool wait_for_input = true; // Wait for user input between cycles
+
+    // Get user input for debugging mode and whether to wait for user input between cycles
+    cout << "Enable debug mode? (1 for yes, 0 for no): ";
+    cin >> debug;
+    cout << "Wait for user input between cycles? (1 for yes, 0 for no): ";
+    cin >> wait_for_input;
 
     assembler my_assembler(debug);      // Set to false to disable debug output from assembler
 
@@ -321,6 +329,12 @@ int main() {
             RegFile.print_registers();
             cout << endl << "Current Data Memory State: " << endl;
             DMem.printMemory();
+
+            // Wait for user input to proceed to next cycle
+            if (wait_for_input) {
+                cout << "Press Enter to proceed to the next cycle..." << endl;
+                cin.ignore();
+            }
         }
 
         // ALU: Send Mux2 output, Read Data 1, and ALU control to ALU for execution
