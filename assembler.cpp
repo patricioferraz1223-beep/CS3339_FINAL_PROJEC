@@ -385,7 +385,7 @@ uint32_t assembler::assemble_instruction (std::string instruction_line, int inst
         opcode = 0x04;   // opcode
         std::string label = r3; // Assuming the label is the third operand
         uint32_t label_address = 0;
-        if (assembler::label_addresses.contains(label)) 
+        if (assembler::label_addresses.find(label) != assembler::label_addresses.end()) 
             label_address = assembler::label_addresses[label]; // Get the instruction index for the label
         else {/* TODO: Handle undefined label error
             print an error like:
@@ -417,7 +417,7 @@ uint32_t assembler::assemble_instruction (std::string instruction_line, int inst
         opcode = 0x02;   // opcode
         std::string label = r1;
         uint32_t label_address = 0;
-        if (assembler::label_addresses.contains(label)) 
+        if (assembler::label_addresses.find(label) != assembler::label_addresses.end()) 
             label_address = assembler::label_addresses[label]; // Get the instruction index for the label
         else {/* TODO: Handle undefined label error
             print an error like:
