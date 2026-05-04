@@ -25,11 +25,11 @@ void DataMemory::write(int address, int value, bool memWrite)
 void  DataMemory::printMemory() {
     cout << "=== Data Memory ===" << endl;
     if (memory.empty()) {
-        cout << "Memory is empty" << endl;
+        cout << "Memory is empty" << endl << endl;
         return;
     }
     for (auto& pair : memory) {
         cout << "Address: " << pair.first
-            << " | Value: " << pair.second << endl;
+            << " | Value: " << pair.second << endl << endl;
     }
 }

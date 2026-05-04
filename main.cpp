@@ -128,7 +128,7 @@ int main() {
     // Declare state registers for each stage of the pipeline
     // FIXME: I need to change these types, theyre not all accurate
     // QUESTION: Do we need to store PC output in a state register? 
-    bool debug = true;
+    bool debug = false;
 
     assembler my_assembler(debug);      // Set to false to disable debug output from assembler
 
@@ -313,8 +313,15 @@ int main() {
         // ALU Control: Send ALU control bits to ALU control to get ALU operation code
         uint8_t aluControlCode = alu_control(id_ex_current.ctrl.aluOp, id_ex_current.funct);
         
-        cout << "Iter " << iterations << ": ALU op=" << (int)aluControlCode << " A=" << id_ex_current.readData1 
-                << " B=" << aluInput2 << " regWrite=" << (int)id_ex_current.ctrl.regWrite << endl;
+        if (debug) {
+            cout << "Iter " << iterations << ": ALU op=" << (int)aluControlCode << " A=" << id_ex_current.readData1 
+                    << " B=" << aluInput2 << " regWrite=" << (int)id_ex_current.ctrl.regWrite << endl;
+
+            cout << endl << "Current Register File State: " << endl;
+            RegFile.print_registers();
+            cout << endl << "Current Data Memory State: " << endl;
+            DMem.printMemory();
+        }
 
         // ALU: Send Mux2 output, Read Data 1, and ALU control to ALU for execution
         ex_mem_next.aluResult = execute_alu(id_ex_current.readData1, aluInput2, id_ex_current.shamt, aluControlCode, ex_mem_next.zeroFlag);
@@ -410,9 +417,12 @@ int main() {
         std::cout << "\nTotal iterations: " << iterations << endl;
         std::cout << "IMem size in bytes: " << IMem.get_size() << endl;
         std::cout << "Expected iterations: " << IMem.get_size() / 4 << endl << endl;
+        std::cout << "Final Output: " << endl << endl;
     }
 
     RegFile.print_registers();
+    std::cout << endl;
+    DMem.printMemory();
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
     While instructions remain
