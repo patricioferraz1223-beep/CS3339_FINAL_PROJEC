@@ -9,6 +9,7 @@ private:
 public:
     int read(int address, bool memRead);
     void write(int address, int value, bool memWrite);
+    void printMemory();
 };
 
 #endif
