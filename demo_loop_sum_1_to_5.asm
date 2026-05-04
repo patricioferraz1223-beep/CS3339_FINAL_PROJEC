@@ -23,3 +23,7 @@ ADD  $s0 $t2 $zero
 NOP
 NOP
 NOP
+SW $s0, 0x10010008
+NOP
+NOP
+NOP
