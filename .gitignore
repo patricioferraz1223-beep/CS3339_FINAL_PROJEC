@@ -1,2 +1,4 @@
 *.bin
 assembler_test
+main
+main.exe

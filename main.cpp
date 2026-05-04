@@ -3,21 +3,25 @@
 #include <cstdint>
 #include <iomanip>
 
-#include "Program_Counter.cpp"
-#include "ALU.cpp"
-#include "ALU_Control.cpp"
-#include "Adder.cpp"
-#include "Register_File.cpp"
-#include "Shift_Left_2.cpp"
-#include "Sign_Extender.cpp"
+#include "Program_Counter.h"
+#include "ALU.h"
+#include "ALU_Control.h"
+#include "Adder.h"
+#include "Register_File.h"
+#include "Shift_Left_2.h"
+#include "Sign_Extender.h"
 #include "MUX.h"
-#include "DataMemory.cpp"
-#include "ControlUnit.cpp"
+#include "DataMemory.h"
+#include "ControlUnit.h"
 #include "assembler.h"
 #include "imem.h"
 
 using namespace std;
 /*/////////////////////////////////////////////////////////////////////////////////////////
+RUNNING THE SIMULATOR:
+g++ -std=c++20 main.cpp assembler.cpp imem.cpp Program_Counter.cpp ALU.cpp ALU_Control.cpp Adder.cpp Register_File.cpp Shift_Left_2.cpp Sign_Extender.cpp DataMemory.cpp ControlUnit.cpp -o main && ./main
+
+
 While there are remaining instructions:
 - Program counter outputs the address of the current instruction
 - Instruction memory outputs the instruction at the address given by the program counter
@@ -116,16 +120,26 @@ QUESTIONS:
 
 
 /*/////////////////////////////////////////////////////////////////////////////////////////
+COMMAND TO COMPILE AND RUN:
+    g++ -std=c++20 main.cpp assembler.cpp imem.cpp Program_Counter.cpp ALU.cpp ALU_Control.cpp Adder.cpp Register_File.cpp Shift_Left_2.cpp Sign_Extender.cpp DataMemory.cpp ControlUnit.cpp -o main && ./main
 //////////////////////////////////////////////////////////////////////////////////////////*/
 
 int main() {
     // Declare state registers for each stage of the pipeline
     // FIXME: I need to change these types, theyre not all accurate
     // QUESTION: Do we need to store PC output in a state register? 
+    bool debug = true;
 
-    assembler my_assembler(false);      // Set to false to disable debug output from assembler
-    my_assembler.process_assembly_file("assembly_file.asm");    // Encode Assembly file
-    
+    assembler my_assembler(debug);      // Set to false to disable debug output from assembler
+
+    // my_assembler.process_assembly_file("MUL_test.asm");    // Encode Assembly file
+    // my_assembler.process_assembly_file("BEQ_test.asm");    // Encode Assembly file
+    // my_assembler.process_assembly_file("J_test.asm");    // Encode Assembly file
+
+    // my_assembler.process_assembly_file("demo_fill_every_other_register.asm");    // Encode Assembly file
+    my_assembler.process_assembly_file("demo_loop_sum_1_to_5.asm");    // Encode Assembly file
+    // my_assembler.process_assembly_file("demo_alu_memory_branch_showcase.asm");    // Encode Assembly file
+
     struct sr_IF_ID {
         uint32_t instruction = 0;
         uint32_t pcPlus4 = 0;
@@ -138,6 +152,8 @@ int main() {
         uint8_t rs = 0;
         uint8_t rt = 0;
         uint8_t rd = 0;
+        uint8_t funct = 0;
+        uint8_t shamt = 0;
         ControlSignals ctrl = {0};
         uint8_t writeReg = 0;
         uint32_t pcPlus4 = 0;
@@ -203,8 +219,16 @@ int main() {
     uint32_t writeData = 0;
 
     int i = 0; // iterator
+    int iterations = 0;
+    int total_cycles = (IMem.get_size() / 4) + 50;
 
-    while (i < IMem.get_size()){   // FIXME: set condition (while instructions remain)
+    while (i < total_cycles) {
+        iterations++;
+
+        if_id_next = {};
+        id_ex_next = {};
+        ex_mem_next = {};
+        mem_wb_next = {};
 
         // FIXME: I haven't included the mux that selects between the branch address and 
         //  the next sequential address for the PC input
@@ -216,10 +240,15 @@ int main() {
         uint32_t fetched_instruction_address = PC.get_address();
 
         // Read address from IMemand 
-        uint32_t fetched_instruction = IMem.read_address(fetched_instruction_address); // Fetch instruction from memory
+        // uint32_t fetched_instruction = IMem.read_address(fetched_instruction_address); // Fetch instruction from memory
+        uint32_t fetched_instruction = 0; // NOP
 
         // Calculate pcPlus4 value for PC incrementation
         uint32_t pc_plus_4 = adder(fetched_instruction_address, 4);
+
+        if (fetched_instruction_address + 3 < (uint32_t)IMem.get_size()) {
+            fetched_instruction = IMem.read_address(fetched_instruction_address);
+        }
 
         // Load values into state register
         if_id_next.instruction = fetched_instruction;
@@ -242,13 +271,16 @@ int main() {
         // MUX 1 — which register gets the result?
         ControlSignals signals = controlUnit(opcode);
         uint8_t writeReg = mux<int>(rt, rd, signals.regDst);
+
+        bool jumpTaken = signals.jump;
+        uint32_t jumpTarget = (if_id_current.pcPlus4 & 0xF0000000) | (address << 2);
         
         // Load instruction into the Register file and output the read addresses
         // sr_instruction -> Register_file;
         uint32_t data1, 
                  data2;
         RegFile.read(rs, rt, data1, data2);
-
+         
         // Sign extend
         uint32_t extended_immediate = sign_extender(immediate);
 
@@ -259,6 +291,8 @@ int main() {
         id_ex_next.rs = rs;
         id_ex_next.rt = rt;
         id_ex_next.rd = rd;
+        id_ex_next.funct = funct;
+        id_ex_next.shamt = shamt;
         id_ex_next.ctrl = signals;
         id_ex_next.writeReg = writeReg;
 
@@ -271,19 +305,23 @@ int main() {
 
         // ADDER: Send SL2 output and PC+4 to Adder for branch address calculation
         // FIXME: I think this should be saved in a state register
-        ex_mem_next.branchAddr = adder(if_id_current.pcPlus4, sl2_out);
+        ex_mem_next.branchAddr = adder(id_ex_current.pcPlus4, sl2_out);
 
         // MUX (ALU Input): Send SE output and Read Data 2 to Mux2
-        uint32_t aluInput2 = mux<uint32_t>(id_ex_current.signExtended, id_ex_current.readData2, id_ex_current.ctrl.aluSrc);
+        uint32_t aluInput2 = mux<uint32_t>(id_ex_current.readData2, id_ex_current.signExtended, id_ex_current.ctrl.aluSrc);
 
         // ALU Control: Send ALU control bits to ALU control to get ALU operation code
-        uint8_t aluControlCode = alu_control(id_ex_current.ctrl.aluOp, funct); // For R-type, funct field determines AL
+        uint8_t aluControlCode = alu_control(id_ex_current.ctrl.aluOp, id_ex_current.funct);
         
+        cout << "Iter " << iterations << ": ALU op=" << (int)aluControlCode << " A=" << id_ex_current.readData1 
+                << " B=" << aluInput2 << " regWrite=" << (int)id_ex_current.ctrl.regWrite << endl;
+
         // ALU: Send Mux2 output, Read Data 1, and ALU control to ALU for execution
-        mem_wb_next.aluResult = execute_alu(id_ex_current.readData1, aluInput2, aluControlCode, ex_mem_next.zeroFlag);
+        ex_mem_next.aluResult = execute_alu(id_ex_current.readData1, aluInput2, id_ex_current.shamt, aluControlCode, ex_mem_next.zeroFlag);
 
         // Load Write Data (Read Data 2) into state register for memory access stage
         ex_mem_next.writeData = id_ex_current.readData2;
+        ex_mem_next.writeReg = id_ex_current.writeReg;
 
         // Update control signals in EX/MEM state register for use in MEM and WB stages
         ex_mem_next.memRead = id_ex_current.ctrl.memRead;
@@ -296,9 +334,37 @@ int main() {
         // Stage 4: Memory Access   //////////////////////////////////////////////////////////////////////////
         
         // MUX 3 — does PC go to next line or branch?
-        // int nextPC = mux<int>(pc4, branchAddr, takeBranch);
+        // int nextPC = mux<int>(ex_mem_current.pcPlus4, ex_mem_current.branchAddr, ex_mem_current.branch && ex_mem_current.zeroFlag);
+        bool branchTaken = ex_mem_current.branch && ex_mem_current.zeroFlag;
 
+        // uint32_t nextPC = mux<uint32_t>(
+        //     pc_plus_4,
+        //     ex_mem_current.branchAddr,
+        //     branchTaken
+        // );
+
+        uint32_t nextPC = pc_plus_4;
+
+        if (branchTaken) {
+            nextPC = ex_mem_current.branchAddr;
+        }
+
+        if (jumpTaken) {
+            nextPC = jumpTarget;
+        }
+        
         // Send ALU output and write data address to DMem
+        DMem.write(ex_mem_current.aluResult, ex_mem_current.writeData, ex_mem_current.memWrite);
+
+        uint32_t mem_read_data = DMem.read(ex_mem_current.aluResult, ex_mem_current.memRead);
+
+        // Load up state registers
+        mem_wb_next.readData = mem_read_data;
+        mem_wb_next.aluResult = ex_mem_current.aluResult;
+        mem_wb_next.writeReg = ex_mem_current.writeReg;
+
+        mem_wb_next.memToReg = ex_mem_current.memToReg;
+        mem_wb_next.regWrite = ex_mem_current.regWrite;
 
         // Stage 5: Write Back      //////////////////////////////////////////////////////////////////////////
 
@@ -306,9 +372,23 @@ int main() {
         // FIXME: the control signal needs to be carried through the pipeline
         writeData = mux<uint32_t>(mem_wb_current.aluResult, mem_wb_current.readData, mem_wb_current.memToReg);
 
+        // QUESTION: Should I write to R8?
+        if (mem_wb_current.regWrite && mem_wb_current.writeReg != 0 && debug) {
+            cout << "Writing to register " << (int)mem_wb_current.writeReg << " value: 0x" << hex << writeData << dec << endl;
+        }
+        RegFile.write(mem_wb_current.writeReg, writeData, mem_wb_current.regWrite); // Write back data from WB stage into register file
+
         // Send DMem output and ALU output to Mux4 for selecting write back data
 
         // End of loop
+
+        if (branchTaken) {
+            if_id_next = {};
+            id_ex_next = {};
+        }
+        if (jumpTaken) {
+            if_id_next = {};
+        }
 
         // Load values into state registers for the next stage
         if_id_current = if_id_next;
@@ -317,12 +397,20 @@ int main() {
         mem_wb_current = mem_wb_next;
 
         //Increment program counter
-        // PC.update(nextPC);
+        PC.update(nextPC);
 
         // Keep zero register hardwired to 0
         RegFile.write(0, 0, true);
+
+        i++;
         
     } // end of while loop
+
+    if (debug) {
+        std::cout << "\nTotal iterations: " << iterations << endl;
+        std::cout << "IMem size in bytes: " << IMem.get_size() << endl;
+        std::cout << "Expected iterations: " << IMem.get_size() / 4 << endl << endl;
+    }
 
     RegFile.print_registers();
 

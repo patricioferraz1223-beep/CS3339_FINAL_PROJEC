@@ -27,10 +27,16 @@ ControlSignals controlUnit(uint8_t opcode) {
     ControlSignals s = {};
 
     switch(opcode) {
-        case 0x00:  // R-type (ADD, SUB, MUL, AND, OR, SLL, SRL)
+        case 0x00:  // R-type (ADD, SUB, AND, OR, SLL, SRL)
             s.regDst   = true;
             s.regWrite = true;
             s.aluOp    = 0b10;
+            break;
+
+        case 0x1C:  // MUL special opcode
+            s.regDst   = true;
+            s.regWrite = true;
+            s.aluOp    = 0b11;
             break;
 
         case 0x08:  // ADDI
