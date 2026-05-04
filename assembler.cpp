@@ -60,7 +60,7 @@ void assembler::process_assembly_file(std::string filename) {
     }
 
     /* open output file stream for writing */
-    output.open(output_filename);
+    output.open(output_filename, std::ios::binary);
     if (!output.is_open()) {
         cerr << "Could not open output file " << output_filename << ". Exiting ..." << endl;
         exit(0);
