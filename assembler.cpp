@@ -75,6 +75,7 @@ void assembler::process_assembly_file(std::string filename) {
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // READ ASSEMBLY FILE LINE BY LINE, ASSEMBLE INSTRUCTIONS, AND WRITE TO OUTPUT FILE
+    if (assembler::debug) cout << endl << "Beginning First pass of Assembler: " << endl;
 
     // First pass: increment instruction count, loading labels into the address table
     while (std::getline(input, instruction_line)) {
@@ -99,6 +100,8 @@ void assembler::process_assembly_file(std::string filename) {
     input.clear();        // clear EOF flag
     input.seekg(0);       // go back to beginning
 
+    if (assembler::debug) cout << endl << "Beginning Second pass of Assembler: " << endl;
+
     int i = 0;
     while (std::getline(input, instruction_line)) {
         if (assembler::debug) cout << "Second pass: reading instruction " << i << ": " << instruction_line << endl;
@@ -120,7 +123,7 @@ void assembler::process_assembly_file(std::string filename) {
             // Assemble the instruction into binary
             uint32_t instruction_binary = assembler::assemble_instruction(instruction_line,i);
 
-            if (assembler::debug) cout << "Are we even trying to write to output?" << endl;
+            if (assembler::debug) cout << "Writing instruction to output file" << endl;
 
             // Convert from little endian to big endian and write to output file
             unsigned char bytes[4];
