@@ -32,4 +32,5 @@ void  DataMemory::printMemory() {
         cout << "Address: " << pair.first
             << " | Value: " << pair.second << endl;
     }
+    cout << endl;
 }
