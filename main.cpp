@@ -124,7 +124,13 @@ COMMAND TO COMPILE AND RUN:
     g++ -std=c++20 main.cpp assembler.cpp imem.cpp Program_Counter.cpp ALU.cpp ALU_Control.cpp Adder.cpp Register_File.cpp Shift_Left_2.cpp Sign_Extender.cpp DataMemory.cpp ControlUnit.cpp -o main && ./main
 //////////////////////////////////////////////////////////////////////////////////////////*/
 
-int main() {
+int main(int argc, char* argv[]) {
+    
+    if (argc < 2) {
+        cerr << "Usage: " << argv[0] << " <assembly_file.asm>" << endl;
+        return 1;
+    }
+    
     // Declare state registers for each stage of the pipeline
     // FIXME: I need to change these types, theyre not all accurate
     // QUESTION: Do we need to store PC output in a state register? 
@@ -140,14 +146,10 @@ int main() {
 
     assembler my_assembler(debug);      // Set to false to disable debug output from assembler
 
-    // my_assembler.process_assembly_file("MUL_test.asm");    // Encode Assembly file
-    // my_assembler.process_assembly_file("BEQ_test.asm");    // Encode Assembly file
-    // my_assembler.process_assembly_file("J_test.asm");    // Encode Assembly file
+    string assembly_file = argv[1];
 
-    // my_assembler.process_assembly_file("demo_fill_every_other_register.asm");    // Encode Assembly file
-    my_assembler.process_assembly_file("demo_loop_sum_1_to_5.asm");    // Encode Assembly file
-    // my_assembler.process_assembly_file("demo_alu_memory_branch_showcase.asm");    // Encode Assembly file
-
+    my_assembler.process_assembly_file(assembly_file);    // Encode Assembly file
+    
     struct sr_IF_ID {
         uint32_t instruction = 0;
         uint32_t pcPlus4 = 0;
