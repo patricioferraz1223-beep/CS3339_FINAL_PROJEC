@@ -220,7 +220,7 @@ uint32_t assembler::assemble_instruction (std::string instruction_line, int inst
         uint32_t opcode = 0x08;   // opcode
         rt = assembler::parse_register(r1);
         rs = assembler::parse_register(r2);
-        int16_t immediate = std::stoi(r3);
+        int16_t immediate = (int16_t)std::stoul(r3, nullptr, 0);
 
         instruction_binary |= (opcode << 26);
         instruction_binary |= (rs     << 21);
