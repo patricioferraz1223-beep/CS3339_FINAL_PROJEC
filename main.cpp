@@ -354,6 +354,7 @@ int main() {
         }
         
         // Send ALU output and write data address to DMem
+        cout << "Writing to Data Memory: address=0x" << hex << ex_mem_current.aluResult << " data=0x" << ex_mem_current.writeData << dec << endl;
         DMem.write(ex_mem_current.aluResult, ex_mem_current.writeData, ex_mem_current.memWrite);
 
         uint32_t mem_read_data = DMem.read(ex_mem_current.aluResult, ex_mem_current.memRead);

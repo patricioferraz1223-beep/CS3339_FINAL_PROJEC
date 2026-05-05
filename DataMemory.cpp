@@ -18,6 +18,10 @@ void DataMemory::write(int address, int value, bool memWrite)
 {
     if (memWrite) {
         memory[address] = value;
+        cout << "memWrite is TRUE" << endl;
+    }
+    else {
+        cout << "memWrite is FALSE" << endl;
     }
 };
 
