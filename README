@@ -6,6 +6,35 @@ register file and memory after the program has finished execution.
 
 Team Members: Moji Adediran, Sam Drell, Patricio Santana, and Tim Sparks
 
+Pipeline Strategy:
+This simulator is designed to faithfully mirror the hardware of a 5-stage pipelined MIPS processor. 
+Every component in the MIPS datapath diagram is represented as a distinct module in the code,
+if it is a separate box in the datapath, it is a separate file in the project.
+
+The 5 stages are:
+Stage      Name                 What Happens 
+IF         Instruction Fetch    PC outputs current address, instruction memory fetches the instruction
+ID         Instruction Decode   Opcode decoded, registers read, control signals generated
+EX         Execute              ALU performs the operation using register values or an immediate
+MEM        Memory Access        Data memory read (LW) or written (SW) based on control signals
+WB         Write Back           Result written back to the destination register
+
+Supported Instructions
+Instruction    Type      Description
+ADD             R        Signed integer addition
+ADDI            I        Add immediate
+SUB             R        Signed integer subtraction
+MUL             R        Integer multiplication
+AND             R        Bitwise AND
+OR              R        Bitwise OR
+SLL             R        Shift left logical
+SRL             R        Shift right logical
+LW              I        Load word from memory
+SW              I        Store word to memory
+BEQ             I        Branch if equal
+J               J        Jump
+NOP             -        No operation
+
 How to Build: 
 
 How to Run: 
