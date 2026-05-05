@@ -1,5 +1,6 @@
 #include "DataMemory.h"
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 
@@ -29,7 +30,8 @@ void  DataMemory::printMemory() {
         return;
     }
     for (auto& pair : memory) {
-        cout << "Address: " << pair.first
-            << " | Value: " << pair.second << endl << endl;
+        cout << "Address: 0x" << hex << std::setw(8) << setfill('0') << pair.first
+            << " | Value: 0x" << hex << std::setw(8) << setfill('0') << pair.second << dec << endl;
     }
+    cout << endl;
 }

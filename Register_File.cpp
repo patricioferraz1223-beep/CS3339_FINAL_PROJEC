@@ -30,10 +30,14 @@ void RegisterFile::write(uint8_t rd, uint32_t data, bool regWrite)
 }
 
 void RegisterFile::print_registers() {
+    std::cout << "== Registers == " << std::endl;
+    std::cout << std::endl;
+    
     for (int i = 0; i < 32; i++) {
         std::cout << "R" << std::setw(2) << i 
                 << ": 0x" << std::hex << std::setw(8) << std::setfill('0') 
                 << registers[i] << std::dec << std::setfill(' ')
                 << std::endl;
     }
+    std::cout << std::endl;
 }

@@ -9,8 +9,11 @@ Here is the bash command I use to run the dissassembler, if it's installed:
 xxd -o 0x80001000 -c 4 -g 4 ../CS3339_FINAL_PROJEC/program.bin | awk '{print $1,$2}' | ./bin/mipsdis -
 */
 
+// Comment out this main when compiling with main.cpp to avoid multiple definition errors
+/*
 int main() {
     assembler my_assembler(true);
     my_assembler.process_assembly_file("assembly_file.asm");
     return 0;
 }
+*/
