@@ -36,8 +36,16 @@ J               J        Jump
 NOP             -        No operation
 
 How to Build: 
+Make sure g++ is installed, then run
+make in the root directory of the project.
+
+This will compile all source files and produce the executable.
 
 How to Run: 
+Windows: .\main.exe <path_to_file.asm>
+          Example: .\main.exe demo_loop_sum_1_to_5.asm
+Linux / macOS: ./main <path_to_file.asm>
+          Example: ./main demo_loop_sum_1_to_5.asm
 
 
 
