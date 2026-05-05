@@ -23,7 +23,7 @@ ADD  $s0 $t2 $zero
 NOP
 NOP
 NOP
-ADDI $s2, $zero, 0x1001  # s2 now holds 0x1001
+ADDI $s2 $zero 0x1001  # s2 now holds 0x1001
 NOP
 NOP
 NOP
